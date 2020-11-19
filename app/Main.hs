@@ -1,6 +1,9 @@
 module Main where
 
+import System.Environment (getArgs)
 import Lib
 
 main :: IO ()
-main = someFunc
+main = getArgs >>= print . prefix . unwords
+
+prefix s = "Args:=> " ++ s
