@@ -4,6 +4,8 @@ import System.Environment (getArgs)
 import Lib
 
 main :: IO ()
-main = getArgs >>= print . prefix . unwords
+main = do
+    args <- getArgs
+    print . prefix . unwords $ args
 
 prefix s = "Args:=> " ++ s
