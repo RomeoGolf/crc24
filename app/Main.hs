@@ -2,6 +2,7 @@ module Main where
 
 import System.Environment (getArgs)
 import System.IO
+import Numeric (readHex)
 import Lib
 
 main :: IO ()
@@ -11,9 +12,7 @@ main = do
     let fname = head args
     print fname
     content <- readFile fname
-    print $ map readInt (words content)
+    print $ map (fst . head . readHex) (words content)
 
 prefix s = "Args:=> " ++ s
 
-readInt :: String -> Int
-readInt = read
