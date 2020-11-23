@@ -11,6 +11,7 @@ main = do
     let fname = head args
     print fname
     content <- readFile fname
-    print $ map (fst . head . readHex) (words content)
+    print $ intListFromHex content
 
-
+intListFromHex :: String -> [Int]
+intListFromHex hexStr = map (fst . head . readHex) (words hexStr)
