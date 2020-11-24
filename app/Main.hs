@@ -3,6 +3,8 @@ module Main where
 import System.Environment (getArgs)
 import System.IO
 import Numeric (readHex)
+import Data.Word
+import Data.Bits
 import Lib
 
 main :: IO ()
@@ -15,3 +17,12 @@ main = do
 
 intListFromHex :: String -> [Int]
 intListFromHex hexStr = map (fst . head . readHex) (words hexStr)
+
+preparedData :: [Word8] -> (Word32, [Word8])
+preparedData (x0:x1:x2:xs) = let
+    initBuf = (fromIntegral x0) `shift` 24
+                .|. (fromIntegral x1) `shift` 16
+                .|. (fromIntegral x2) `shift` 08
+    in (initBuf, xs)
+preparedData _ = error "The data too short!"
+
