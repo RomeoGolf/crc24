@@ -1,14 +1,16 @@
 {-
 
 CRC-24 description:
-Name:		CRC-24/ADS-B
-Width:		24
-Poly:		FFF409
-Init:		0000
-RefIn:		false
-RefOut:		false
-XorOut:		address(*)
-Check:		A05E66 (for the «123456789» string or { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39 })
+  Name : CRC-24/ADS-B
+ Width : 24
+  Poly : FFF409
+  Init : 000000
+ RefIn : false
+RefOut : false
+XorOut : address(*)
+ Check : A05E66
+
+(Check = CRC-24 for the «123456789» string or { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39 })
 
 (*)
 - modified address from AA field for mode-S uplink or address for downlink
