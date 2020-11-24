@@ -69,7 +69,7 @@ module Main where
 
 import System.Environment (getArgs)
 import System.IO (readFile)
-import Numeric (readHex)
+import Numeric (readHex, showHex)
 import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
 
@@ -80,10 +80,14 @@ main = do
     print fname
     content <- readFile fname
     print $ intListFromHex content
+    print $ showHex ((crc24 . byteListFromInt . intListFromHex) content) ""
 
 intListFromHex :: String    -- hex bytes string (a least byte in the head)
                   -> [Int]  -- list of bytes
 intListFromHex hexStr = map (fst . head . readHex) (words hexStr)
+
+byteListFromInt :: [Int] -> [Word8]
+byteListFromInt = map fromIntegral
 
 preparedData :: [Word8]                 -- input list of bytes
                 -> (Word32, [Word8])    -- initial buffer and the rest list
