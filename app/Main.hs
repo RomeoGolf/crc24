@@ -54,3 +54,20 @@ testData' = [0, 0, 0, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
 crc24DataOnly :: [Word8] -> Word32
 crc24DataOnly xs = crc24 $ 0:0:0:xs
 
+
+
+encodedAddress' :: Word32 -> Word32 -> Word32 -> Int -> Word32
+encodedAddress' addr poly buff 0 = buff .&. 0x00FFFFFF     -- least 24 bits
+encodedAddress' addr poly buff cnt = let
+    maskC :: Word32
+    maskC = 0x01000000
+    addr' = addr `shift` 1
+    poly' = poly `shift` (-1)
+    buff' = if addr' .&. maskC /= 0 then buff `xor` poly' else buff
+    in encodedAddress' addr' poly' buff' (pred cnt)
+
+encodedAddress :: Word32 -> Word32
+encodedAddress addr = encodedAddress' addr poly 0 24 where
+    poly :: Word32
+    poly = 0x01FFF409
+
