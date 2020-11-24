@@ -44,3 +44,7 @@ crc24' (buf, x:xs) = let
         b'' = if cBit then b' `xor` poly else b'
         in processedBuf b'' (pred cnt)
     in crc24' (processedBuf buf' 8, xs)
+
+crc24 :: [Word8] -> Word32
+crc24 = crc24' . preparedData . reverse
+
