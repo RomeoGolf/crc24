@@ -71,3 +71,11 @@ encodedAddress addr = encodedAddress' addr poly 0 24 where
     poly :: Word32
     poly = 0x01FFF409
 
+
+
+testUpFormat :: [Word8] -> Word32 -> Word32
+testUpFormat bytes addr = let
+    crc = crc24 bytes
+    addr' = encodedAddress addr
+    in crc `xor` addr'
+
