@@ -80,10 +80,12 @@ main = do
     content <- readFile fname
     print $ intListFromHex content
 
-intListFromHex :: String -> [Int]
+intListFromHex :: String    -- hex bytes string (a least byte in the head)
+                  -> [Int]  -- list of bytes
 intListFromHex hexStr = map (fst . head . readHex) (words hexStr)
 
-preparedData :: [Word8] -> (Word32, [Word8])
+preparedData :: [Word8]                 -- input list of bytes
+                -> (Word32, [Word8])    -- initial buffer and the rest list
 preparedData (x0:x1:x2:xs) = let
     initBuf = (fromIntegral x0) `shift` 24
                 .|. (fromIntegral x1) `shift` 16
@@ -91,7 +93,8 @@ preparedData (x0:x1:x2:xs) = let
     in (initBuf, xs)
 preparedData _ = error "The data is too short!"
 
-crc24' :: (Word32, [Word8]) -> Word32
+crc24' :: (Word32, [Word8])     -- initial buffer and the rest list
+            -> Word32           -- crc24 in 3 least bytes
 crc24' (buf, []) = buf `shift` (-8)
 crc24' (buf, x:xs) = let
     maskC :: Word32
@@ -108,7 +111,8 @@ crc24' (buf, x:xs) = let
         in processedBuf b'' (pred cnt)
     in crc24' (processedBuf buf' 8, xs)
 
-crc24 :: [Word8] -> Word32
+crc24 :: [Word8]        -- input bytes list with 3 zero least bytes
+         -> Word32      -- crc24 in 3 leasb bytes
 crc24 = crc24' . preparedData . reverse
 
 testData :: [Word8]
@@ -121,7 +125,11 @@ crc24DataOnly xs = crc24 $ 0:0:0:xs
 
 
 
-encodedAddress' :: Word32 -> Word32 -> Word32 -> Int -> Word32
+encodedAddress' :: Word32       -- the MODE-S address
+                   -> Word32    -- the polynom CRC24
+                   -> Word32    -- the buffer for a result
+                   -> Int       -- the counter for recurrent invoking
+                   -> Word32    -- the encoded address
 encodedAddress' addr poly buff 0 = buff .&. 0x00FFFFFF     -- least 24 bits
 encodedAddress' addr poly buff cnt = let
     maskC :: Word32
@@ -131,7 +139,8 @@ encodedAddress' addr poly buff cnt = let
     buff' = if addr' .&. maskC /= 0 then buff `xor` poly' else buff
     in encodedAddress' addr' poly' buff' (pred cnt)
 
-encodedAddress :: Word32 -> Word32
+encodedAddress :: Word32        -- the MODE-S address
+                  -> Word32     -- the encoded address
 encodedAddress addr = encodedAddress' addr poly 0 24 where
     poly :: Word32
     poly = 0x01FFF409
@@ -160,11 +169,10 @@ addr4 :: Word32
 addr4 = 0x533F51
 res4 = 0xAAAAAA
 
-
-
-testUpFormat :: [Word8] -> Word32 -> Word32
+testUpFormat :: [Word8]     -- the input bytes
+                -> Word32   -- the MODE-S address
+                -> Word32   -- AP field
 testUpFormat bytes addr = let
     crc = crc24 bytes
     addr' = encodedAddress addr
     in crc `xor` addr'
-
