@@ -123,7 +123,7 @@ crc24DataOnly :: [Word8] -> Word32
 crc24DataOnly xs = crc24 $ 0:0:0:xs
 
 encodedAddress' :: Word32       -- the MODE-S address
-                   -> Word32    -- the polynom CRC24
+                   -> Word32    -- the CRC24 polynom
                    -> Word32    -- the buffer for a result
                    -> Int       -- the counter for recurrent invoking
                    -> Word32    -- the encoded address
