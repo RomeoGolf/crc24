@@ -66,11 +66,10 @@ Example squitter DF11:
 module Main where
 
 import System.Environment (getArgs)
-import System.IO
+import System.IO (readFile)
 import Numeric (readHex)
-import Data.Word
-import Data.Bits
-import Lib
+import Data.Word (Word8, Word32)
+import Data.Bits ((.|.), (.&.), shift, xor)
 
 main :: IO ()
 main = do
@@ -122,8 +121,6 @@ testData' = [0, 0, 0, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
 
 crc24DataOnly :: [Word8] -> Word32
 crc24DataOnly xs = crc24 $ 0:0:0:xs
-
-
 
 encodedAddress' :: Word32       -- the MODE-S address
                    -> Word32    -- the polynom CRC24
