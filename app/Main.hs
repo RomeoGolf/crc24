@@ -169,10 +169,10 @@ addr4 :: Word32
 addr4 = 0x533F51
 res4 = 0xAAAAAA
 
-testUpFormat :: [Word8]     -- the input bytes
-                -> Word32   -- the MODE-S address
-                -> Word32   -- AP field
-testUpFormat bytes addr = let
+apFieldForUpFormat :: [Word8]     -- the input bytes
+                      -> Word32   -- the MODE-S address
+                      -> Word32   -- AP field
+apFieldForUpFormat bytes addr = let
     crc = crc24 bytes
     addr' = encodedAddress addr
     in crc `xor` addr'
