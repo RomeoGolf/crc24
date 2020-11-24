@@ -32,3 +32,15 @@ preparedData (x0:x1:x2:xs) = let
     in (initBuf, xs)
 preparedData _ = error "The data is too short!"
 
+crc24' :: (Word32, [Word8]) -> Word32
+crc24' (buf, []) = buf `shift` (-8)
+crc24' (buf, x:xs) = let
+    buf' = buf .|. (fromIntegral x)
+    processedBuf :: Word32 -> Int -> Word32
+    processedBuf b 0 = b
+    processedBuf b cnt = let
+        cBit = (b .&. maskC) /= 0
+        b' = b `shift` (1)
+        b'' = if cBit then b' `xor` poly else b'
+        in processedBuf b'' (pred cnt)
+    in crc24' (processedBuf buf' 8, xs)
