@@ -18,12 +18,6 @@ main = do
 intListFromHex :: String -> [Int]
 intListFromHex hexStr = map (fst . head . readHex) (words hexStr)
 
-maskC :: Word32
-maskC = 0x80000000
-
-poly :: Word32
-poly = 0xFFF40900
-
 preparedData :: [Word8] -> (Word32, [Word8])
 preparedData (x0:x1:x2:xs) = let
     initBuf = (fromIntegral x0) `shift` 24
@@ -35,6 +29,10 @@ preparedData _ = error "The data is too short!"
 crc24' :: (Word32, [Word8]) -> Word32
 crc24' (buf, []) = buf `shift` (-8)
 crc24' (buf, x:xs) = let
+    maskC :: Word32
+    maskC = 0x80000000
+    poly :: Word32
+    poly = 0xFFF40900
     buf' = buf .|. (fromIntegral x)
     processedBuf :: Word32 -> Int -> Word32
     processedBuf b 0 = b
