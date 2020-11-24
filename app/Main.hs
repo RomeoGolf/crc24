@@ -30,5 +30,5 @@ preparedData (x0:x1:x2:xs) = let
                 .|. (fromIntegral x1) `shift` 16
                 .|. (fromIntegral x2) `shift` 08
     in (initBuf, xs)
-preparedData _ = error "The data too short!"
+preparedData _ = error "The data is too short!"
 
