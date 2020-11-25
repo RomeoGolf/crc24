@@ -9,7 +9,7 @@ defaultAddressModeS :: Word32
 defaultAddressModeS = 0x00FFFFFF
 
 defaultFname :: String
-defaultFname = "stdin"
+defaultFname = ""
 
 data Flag
     = CheckCrc

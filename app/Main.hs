@@ -90,9 +90,9 @@ main = do
     printf "Address: 0x%06x\n" addressModeS'
     let fname' = fname flags
     print $ "File name: " ++ fname'
-    {-content <- readFile fname-}
-    {-print $ intListFromHex content-}
-    {-print $ showHex ((crc24 . byteListFromInt . intListFromHex) content) ""-}
+    content <- if null fname' then return $ head rest else readFile fname'
+    print $ intListFromHex content
+    print $ showHex ((crc24 . byteListFromInt . intListFromHex) content) ""
 
 intListFromHex :: String    -- hex bytes string (a least byte in the head)
                   -> [Int]  -- list of bytes
