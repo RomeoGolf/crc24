@@ -75,18 +75,21 @@ import System.Console.GetOpt
 import Numeric (readHex, showHex)
 import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
+import Text.Printf
 
 import Ads_b
 import Opts
 
 main :: IO ()
 main = do
-    {-args <- getArgs-}
     (flags, rest) <- getArgs >>= compilerOpts
-    print flags
-    print rest
-    {-let fname = head args-}
-    {-print fname-}
+    print $ "flags: " ++ (show flags)
+    print $ "rest: " ++ (show rest)
+    print $ "hasVersion: " ++ show (hasVersion flags)
+    let addressModeS' = addressModeS flags
+    printf "Address: 0x%06x\n" addressModeS'
+    let fname' = fname flags
+    print $ "File name: " ++ fname'
     {-content <- readFile fname-}
     {-print $ intListFromHex content-}
     {-print $ showHex ((crc24 . byteListFromInt . intListFromHex) content) ""-}
