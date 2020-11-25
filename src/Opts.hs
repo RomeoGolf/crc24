@@ -19,6 +19,7 @@ data Flag
     | ShowInput
     | Input String
     | AddrModeS String
+    | ArgFile String
     | Version
     | Help
     deriving (Eq, Ord, Show)
@@ -40,6 +41,8 @@ flagDescr =
             "Input file."
        ,Option ['a'] ["address"]      (ReqArg AddrModeS "ADDRESS")
             "MODE-S aircraft address."
+       ,Option [] ["arg-file"]        (ReqArg ArgFile "ARGFILE")
+            "The text file contained commandline arguments."
 
        ,Option ['v'] ["version"]      (NoArg Version)
             "Show version number"
@@ -64,11 +67,13 @@ hasHelp                 = elem Help
 hasVersion              = elem Version
 hasShowInput            = elem ShowInput
 
-argAddress, argFile :: Flag -> Maybe String
+argAddress, argFile, argArgFile :: Flag -> Maybe String
 argAddress (AddrModeS addr) = Just addr
 argAddress _ = Nothing
 argFile (Input file) = Just file
 argFile _ = Nothing
+argArgFile (ArgFile file) = Just file
+argArgFile _ = Nothing
 
 addressModeS :: [Flag] -> Word32
 addressModeS = maybe defaultAddressModeS read . firstAddress
@@ -81,6 +86,12 @@ fname = maybe defaultFname id . firstFname
     where
         firstFname :: [Flag] -> Maybe String
         firstFname flags = foldr (\x y -> y <|> argFile x) Nothing flags
+
+argFname :: [Flag] -> String
+argFname = maybe defaultFname id . firstFname
+    where
+        firstFname :: [Flag] -> Maybe String
+        firstFname flags = foldr (\x y -> y <|> argArgFile x) Nothing flags
 
 
 

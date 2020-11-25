@@ -83,6 +83,17 @@ import Opts
 main :: IO ()
 main = do
     (flags, rest) <- getArgs >>= compilerOpts
+
+    let argFname' = argFname flags
+    argsFromFile <- if null argFname' then
+            return ""
+        else
+            readFile argFname'
+    (flags, rest) <- if null argFname' then
+            return (flags, rest)
+        else
+            return ( words (argsFromFile)) >>= compilerOpts
+
     let addressModeS' = addressModeS flags
     let fname' = fname flags
     content <- if null fname' then return $ unwords rest else readFile fname'
