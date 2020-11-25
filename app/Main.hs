@@ -83,9 +83,6 @@ import Opts
 main :: IO ()
 main = do
     (flags, rest) <- getArgs >>= compilerOpts
-    print $ "flags: " ++ (show flags)
-    print $ "rest: " ++ (show rest)
-    print $ "hasVersion: " ++ show (hasVersion flags)
     let addressModeS' = addressModeS flags
     printf "Address: 0x%06X\n" addressModeS'
     let fname' = fname flags
@@ -108,8 +105,6 @@ main = do
         printf "Uplink AP field: 0x%06X\n" (apFieldForUpFormat ((byteListFromInt . intListFromHex) content) addressModeS')
         else return ()
 
-
-    {-print $ showHex ((crc24 . byteListFromInt . intListFromHex) content) ""-}
 
 intListFromHex :: String    -- hex bytes string (a least byte in the head)
                   -> [Int]  -- list of bytes
