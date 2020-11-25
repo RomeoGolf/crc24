@@ -92,7 +92,24 @@ main = do
     print $ "File name: " ++ fname'
     content <- if null fname' then return $ head rest else readFile fname'
     print $ intListFromHex content
-    print $ showHex ((crc24 . byteListFromInt . intListFromHex) content) ""
+    if (hasVersion flags) then
+        putStrLn "Version: 0.1"
+        else return ()
+    if (hasCheckCrc flags) then
+        printf "CRC24: 0x%06X\n" ((crc24 . byteListFromInt . intListFromHex) content)
+        else return ()
+    if (hasCalcCrc flags) then
+        printf "CRC24: 0x%06X\n" ((crc24DataOnly . byteListFromInt . intListFromHex) content)
+        else return ()
+    if (hasEncodeAddress flags) then
+        printf "Encoded Address: 0x%06X\n" (encodedAddress addressModeS')
+        else return ()
+    if (hasCalcUplinkApField flags) then
+        printf "Uplink AP field: 0x%06X\n" (apFieldForUpFormat ((byteListFromInt . intListFromHex) content) addressModeS')
+        else return ()
+
+
+    {-print $ showHex ((crc24 . byteListFromInt . intListFromHex) content) ""-}
 
 intListFromHex :: String    -- hex bytes string (a least byte in the head)
                   -> [Int]  -- list of bytes
