@@ -50,8 +50,14 @@ compilerOpts argv =
        (_,_,errs) -> ioError (userError (concat errs ++ usageInfo header flagDescr))
     where header = "Usage: <this-exe> [OPTION...] files..."
 
-hasVersion :: [Flag] -> Bool
-hasVersion flags = Version `elem` flags
+hasCheckCrc, hasCalcCrc, hasEncodeAddress,
+    hasCalcUplinkApField, hasHelp, hasVersion :: [Flag] -> Bool
+hasCheckCrc             = elem CheckCrc
+hasCalcCrc              = elem CalcCrc
+hasEncodeAddress        = elem EncodeAddress
+hasCalcUplinkApField    = elem CalcUplinkApField
+hasHelp                 = elem Help
+hasVersion              = elem Version
 
 argAddress, argFile :: Flag -> Maybe String
 argAddress (AddrModeS addr) = Just addr
