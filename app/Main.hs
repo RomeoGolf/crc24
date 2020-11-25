@@ -87,7 +87,7 @@ main = do
     print $ "rest: " ++ (show rest)
     print $ "hasVersion: " ++ show (hasVersion flags)
     let addressModeS' = addressModeS flags
-    printf "Address: 0x%06x\n" addressModeS'
+    printf "Address: 0x%06X\n" addressModeS'
     let fname' = fname flags
     print $ "File name: " ++ fname'
     content <- if null fname' then return $ head rest else readFile fname'
