@@ -84,13 +84,15 @@ main :: IO ()
 main = do
     (flags, rest) <- getArgs >>= compilerOpts
     let addressModeS' = addressModeS flags
-    printf "Address: 0x%06X\n" addressModeS'
     let fname' = fname flags
-    print $ "File name: " ++ fname'
-    content <- if null fname' then return $ head rest else readFile fname'
-    print $ intListFromHex content
+    content <- if null fname' then return $ unwords rest else readFile fname'
     if (hasVersion flags) then
         putStrLn "Version: 0.1"
+        else return ()
+    if (hasShowInput flags) then do
+            printf "Address: 0x%06X\n" addressModeS'
+            putStrLn $ "File name: " ++ fname'
+            putStrLn $ "Input message: " ++ (show $ intListFromHex content)
         else return ()
     if (hasCheckCrc flags) then
         printf "CRC24: 0x%06X\n" ((crc24 . byteListFromInt . intListFromHex) content)
