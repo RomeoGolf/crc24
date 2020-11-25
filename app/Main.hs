@@ -71,18 +71,63 @@ module Main where
 
 import System.Environment (getArgs)
 import System.IO (readFile)
+import System.Console.GetOpt
 import Numeric (readHex, showHex)
 import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
 
+data Flag
+    = CheckCrc
+    | CalcCrc
+    | EncodeAddress
+    | CalcUplinkApField
+    | Input String
+    | AddrModeS String
+    | Version
+    | Help
+    deriving (Eq, Ord, Show)
+
+flagDescr =
+       [Option []    ["check-crc"]    (NoArg CheckCrc)
+            "Check CRC-24 for an input data."
+       ,Option []    ["calc-crc"]     (NoArg CalcCrc)
+            "Calculate CRC-24 for an input data."
+       ,Option ['e'] ["encode-addr"]  (NoArg EncodeAddress)
+            "Encode MODE-S uplink address."
+       ,Option []    ["calc-ap"]      (NoArg CalcUplinkApField)
+            "Calculate MODE-S uplink AP field."
+
+       ,Option ['f'] ["file"]         (ReqArg Input "FILE")
+            "Input file."
+       ,Option ['a'] ["address"]      (ReqArg AddrModeS "ADDRESS")
+            "MODE-S aircraft address."
+
+       ,Option ['v'] ["version"]      (NoArg Version)
+            "Show version number"
+       ,Option ['h', '?'] ["help"]    (NoArg Help)
+            "Print this help message"
+       ]
+
+-- ---------
+compilerOpts :: [String] -> IO ([Flag], [String])
+compilerOpts argv =
+    case getOpt Permute flagDescr argv of
+       (o,n,[]  ) -> return (o,n)
+       (_,_,errs) -> ioError (userError (concat errs ++ usageInfo header flagDescr))
+    where header = "Usage: <this-exe> [OPTION...] files..."
+-- ---------
+
 main :: IO ()
 main = do
-    args <- getArgs
-    let fname = head args
-    print fname
-    content <- readFile fname
-    print $ intListFromHex content
-    print $ showHex ((crc24 . byteListFromInt . intListFromHex) content) ""
+    {-args <- getArgs-}
+    (flags, rest) <- getArgs >>= compilerOpts
+    print flags
+    print rest
+    {-let fname = head args-}
+    {-print fname-}
+    {-content <- readFile fname-}
+    {-print $ intListFromHex content-}
+    {-print $ showHex ((crc24 . byteListFromInt . intListFromHex) content) ""-}
 
 intListFromHex :: String    -- hex bytes string (a least byte in the head)
                   -> [Int]  -- list of bytes
