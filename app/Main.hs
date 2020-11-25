@@ -76,46 +76,8 @@ import Numeric (readHex, showHex)
 import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
 
-data Flag
-    = CheckCrc
-    | CalcCrc
-    | EncodeAddress
-    | CalcUplinkApField
-    | Input String
-    | AddrModeS String
-    | Version
-    | Help
-    deriving (Eq, Ord, Show)
-
-flagDescr =
-       [Option []    ["check-crc"]    (NoArg CheckCrc)
-            "Check CRC-24 for an input data."
-       ,Option []    ["calc-crc"]     (NoArg CalcCrc)
-            "Calculate CRC-24 for an input data."
-       ,Option ['e'] ["encode-addr"]  (NoArg EncodeAddress)
-            "Encode MODE-S uplink address."
-       ,Option []    ["calc-ap"]      (NoArg CalcUplinkApField)
-            "Calculate MODE-S uplink AP field."
-
-       ,Option ['f'] ["file"]         (ReqArg Input "FILE")
-            "Input file."
-       ,Option ['a'] ["address"]      (ReqArg AddrModeS "ADDRESS")
-            "MODE-S aircraft address."
-
-       ,Option ['v'] ["version"]      (NoArg Version)
-            "Show version number"
-       ,Option ['h', '?'] ["help"]    (NoArg Help)
-            "Print this help message"
-       ]
-
--- ---------
-compilerOpts :: [String] -> IO ([Flag], [String])
-compilerOpts argv =
-    case getOpt Permute flagDescr argv of
-       (o,n,[]  ) -> return (o,n)
-       (_,_,errs) -> ioError (userError (concat errs ++ usageInfo header flagDescr))
-    where header = "Usage: <this-exe> [OPTION...] files..."
--- ---------
+import Ads_b
+import Opts
 
 main :: IO ()
 main = do
@@ -136,64 +98,10 @@ intListFromHex hexStr = map (fst . head . readHex) (words hexStr)
 byteListFromInt :: [Int] -> [Word8]
 byteListFromInt = map fromIntegral
 
-preparedData :: [Word8]                 -- input list of bytes
-                -> (Word32, [Word8])    -- initial buffer and the rest list
-preparedData (x0:x1:x2:xs) = let
-    initBuf = (fromIntegral x0) `shift` 24
-                .|. (fromIntegral x1) `shift` 16
-                .|. (fromIntegral x2) `shift` 08
-    in (initBuf, xs)
-preparedData _ = error "The data is too short!"
-
-crc24' :: (Word32, [Word8])     -- initial buffer and the rest list
-            -> Word32           -- crc24 in 3 least bytes
-crc24' (buf, []) = buf `shift` (-8)
-crc24' (buf, x:xs) = let
-    maskC :: Word32
-    maskC = 0x80000000
-    poly :: Word32
-    poly = 0xFFF40900
-    buf' = buf .|. (fromIntegral x)
-    processedBuf :: Word32 -> Int -> Word32
-    processedBuf b 0 = b
-    processedBuf b cnt = let
-        cBit = (b .&. maskC) /= 0
-        b' = b `shift` (1)
-        b'' = if cBit then b' `xor` poly else b'
-        in processedBuf b'' (pred cnt)
-    in crc24' (processedBuf buf' 8, xs)
-
-crc24 :: [Word8]        -- input bytes list with 3 zero least bytes
-         -> Word32      -- crc24 in 3 leasb bytes
-crc24 = crc24' . preparedData . reverse
-
 testData :: [Word8]
 testData = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
 testData' :: [Word8]
 testData' = [0, 0, 0, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
-
-crc24DataOnly :: [Word8] -> Word32
-crc24DataOnly xs = crc24 $ 0:0:0:xs
-
-encodedAddress' :: Word32       -- the MODE-S address
-                   -> Word32    -- the CRC24 polynom
-                   -> Word32    -- the buffer for a result
-                   -> Int       -- the counter for recurrent invoking
-                   -> Word32    -- the encoded address
-encodedAddress' addr poly buff 0 = buff .&. 0x00FFFFFF     -- least 24 bits
-encodedAddress' addr poly buff cnt = let
-    maskC :: Word32
-    maskC = 0x01000000
-    addr' = addr `shift` 1
-    poly' = poly `shift` (-1)
-    buff' = if addr' .&. maskC /= 0 then buff `xor` poly' else buff
-    in encodedAddress' addr' poly' buff' (pred cnt)
-
-encodedAddress :: Word32        -- the MODE-S address
-                  -> Word32     -- the encoded address
-encodedAddress addr = encodedAddress' addr poly 0 24 where
-    poly :: Word32
-    poly = 0x01FFF409
 
 testUf1 :: [Word8]
 testUf1 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20]
@@ -219,10 +127,3 @@ addr4 :: Word32
 addr4 = 0x533F51
 res4 = 0xAAAAAA
 
-apFieldForUpFormat :: [Word8]     -- the input bytes
-                      -> Word32   -- the MODE-S address
-                      -> Word32   -- AP field
-apFieldForUpFormat bytes addr = let
-    crc = crc24 bytes
-    addr' = encodedAddress addr
-    in crc `xor` addr'
