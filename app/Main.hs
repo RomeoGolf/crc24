@@ -76,6 +76,7 @@ import Numeric (readHex, showHex)
 import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
 import Text.Printf
+import Data.Maybe (fromMaybe)
 
 import Ads_b
 import Opts
@@ -88,7 +89,7 @@ main = do
         Nothing    -> return (flags, rest)
         Just fname -> readFile fname >>= return . words >>= compilerOpts
 
-    let addressModeS' = addressModeS flags
+    let addressModeS' = fromMaybe defaultAddressModeS (addressModeS flags)
 
     content <- case fname flags of
         Nothing     -> return $ unwords rest
@@ -98,7 +99,9 @@ main = do
         putStrLn "Version: 0.1"
         else return ()
     if (hasShowInput flags) then do
-            printf "Address: 0x%06X\n" addressModeS'
+            case addressModeS flags of
+                Nothing     -> printf "No address in the options!\nDefault all-call address 0x%06X will be used.\n" defaultAddressModeS
+                Just fname' -> printf "Address: 0x%06X\n" addressModeS'
             case fname flags of
                 Nothing     -> putStrLn "No data file name"
                 Just fname' -> putStrLn $ "Data file name: " ++ fname'
@@ -110,10 +113,16 @@ main = do
     if (hasCalcCrc flags) then
         printf "CRC24: 0x%06X\n" ((crc24DataOnly . byteListFromInt . intListFromHex) content)
         else return ()
-    if (hasEncodeAddress flags) then
+    if (hasEncodeAddress flags) then do
+        case addressModeS flags of
+            Nothing     -> printf "Warning: Default all-call address 0x%06X is used.\n" defaultAddressModeS
+            Just fname' -> return ()
         printf "Encoded Address: 0x%06X\n" (encodedAddress addressModeS')
         else return ()
-    if (hasCalcUplinkApField flags) then
+    if (hasCalcUplinkApField flags) then do
+        case addressModeS flags of
+            Nothing     -> printf "Warning: Default all-call address 0x%06X is used.\n" defaultAddressModeS
+            Just fname' -> return ()
         printf "Uplink AP field: 0x%06X\n" (apFieldForUpFormat ((byteListFromInt . intListFromHex) content) addressModeS')
         else return ()
 

@@ -75,8 +75,8 @@ argFile _ = Nothing
 argArgFile (ArgFile file) = Just file
 argArgFile _ = Nothing
 
-addressModeS :: [Flag] -> Word32
-addressModeS = maybe defaultAddressModeS read . firstAddress
+addressModeS :: [Flag] -> Maybe Word32
+addressModeS flags = read <$> firstAddress flags
     where
         firstAddress :: [Flag] -> Maybe String
         firstAddress flags = foldr (\x y -> y <|> argAddress x) Nothing flags
