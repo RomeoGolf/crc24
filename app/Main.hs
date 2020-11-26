@@ -84,14 +84,16 @@ import Opts
 
 main :: IO ()
 main = do
+    -- get commandline options
     (flags, rest) <- getArgs >>= compilerOpts
-
+    -- get options from a file if it presents
     (flags, rest) <- case argFname flags of
         Nothing    -> return (flags, rest)
         Just fname -> readFile fname >>= compilerOpts . words
 
     let addressModeS' = fromMaybe defaultAddressModeS (addressModeS flags)
 
+    -- read data (message)
     content <- case fname flags of
         Nothing     -> return $ unwords rest
         Just fname' -> readFile fname'
