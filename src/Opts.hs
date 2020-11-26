@@ -82,10 +82,10 @@ addressModeS flags = read <$> firstAddress flags
         firstAddress flags = foldr (\x y -> y <|> argAddress x) Nothing flags
 
 fname :: [Flag] -> Maybe String
-fname flags = foldr (\x y -> y <|> argFile x) Nothing flags
+fname = foldr (\x y -> y <|> argFile x) Nothing
 
 argFname :: [Flag] -> Maybe String
-argFname flags = foldr (\x y -> y <|> argArgFile x) Nothing flags
+argFname = foldr (\x y -> y <|> argArgFile x) Nothing
 
 
 
