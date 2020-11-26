@@ -77,6 +77,7 @@ import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
 import Text.Printf
 import Data.Maybe (fromMaybe)
+import Control.Monad (when)
 
 import Ads_b
 import Opts
@@ -87,7 +88,7 @@ main = do
 
     (flags, rest) <- case argFname flags of
         Nothing    -> return (flags, rest)
-        Just fname -> readFile fname >>= return . words >>= compilerOpts
+        Just fname -> readFile fname >>= compilerOpts . words
 
     let addressModeS' = fromMaybe defaultAddressModeS (addressModeS flags)
 
@@ -95,36 +96,29 @@ main = do
         Nothing     -> return $ unwords rest
         Just fname' -> readFile fname'
 
-    if (hasVersion flags) then
-        putStrLn "Version: 0.1"
-        else return ()
-    if (hasShowInput flags) then do
+    when (hasVersion flags) $ putStrLn "Version: 0.1"
+    when (hasShowInput flags) $ do
             case addressModeS flags of
                 Nothing     -> printf "No address in the options!\nDefault all-call address 0x%06X will be used.\n" defaultAddressModeS
                 Just fname' -> printf "Address: 0x%06X\n" addressModeS'
             case fname flags of
                 Nothing     -> putStrLn "No data file name"
                 Just fname' -> putStrLn $ "Data file name: " ++ fname'
-            putStrLn $ "Input message: " ++ (show $ intListFromHex content)
-        else return ()
-    if (hasCheckCrc flags) then
+            putStrLn $ "Input message: " ++ show (intListFromHex content)
+    when (hasCheckCrc flags) $
         printf "CRC24: 0x%06X\n" ((crc24 . byteListFromInt . intListFromHex) content)
-        else return ()
-    if (hasCalcCrc flags) then
+    when (hasCalcCrc flags) $
         printf "CRC24: 0x%06X\n" ((crc24DataOnly . byteListFromInt . intListFromHex) content)
-        else return ()
-    if (hasEncodeAddress flags) then do
+    when (hasEncodeAddress flags) $ do
         case addressModeS flags of
             Nothing     -> printf "Warning: Default all-call address 0x%06X is used.\n" defaultAddressModeS
             Just fname' -> return ()
         printf "Encoded Address: 0x%06X\n" (encodedAddress addressModeS')
-        else return ()
-    if (hasCalcUplinkApField flags) then do
+    when (hasCalcUplinkApField flags) $ do
         case addressModeS flags of
             Nothing     -> printf "Warning: Default all-call address 0x%06X is used.\n" defaultAddressModeS
             Just fname' -> return ()
         printf "Uplink AP field: 0x%06X\n" (apFieldForUpFormat ((byteListFromInt . intListFromHex) content) addressModeS')
-        else return ()
 
 
 intListFromHex :: String    -- hex bytes string (a least byte in the head)
