@@ -81,11 +81,8 @@ addressModeS = maybe defaultAddressModeS read . firstAddress
         firstAddress :: [Flag] -> Maybe String
         firstAddress flags = foldr (\x y -> y <|> argAddress x) Nothing flags
 
-fname :: [Flag] -> String
-fname = maybe defaultFname id . firstFname
-    where
-        firstFname :: [Flag] -> Maybe String
-        firstFname flags = foldr (\x y -> y <|> argFile x) Nothing flags
+fname :: [Flag] -> Maybe String
+fname flags = foldr (\x y -> y <|> argFile x) Nothing flags
 
 argFname :: [Flag] -> Maybe String
 argFname flags = foldr (\x y -> y <|> argArgFile x) Nothing flags

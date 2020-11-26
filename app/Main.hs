@@ -89,14 +89,19 @@ main = do
         Just fname -> readFile fname >>= return . words >>= compilerOpts
 
     let addressModeS' = addressModeS flags
-    let fname' = fname flags
-    content <- if null fname' then return $ unwords rest else readFile fname'
+
+    content <- case fname flags of
+        Nothing     -> return $ unwords rest
+        Just fname' -> readFile fname'
+
     if (hasVersion flags) then
         putStrLn "Version: 0.1"
         else return ()
     if (hasShowInput flags) then do
             printf "Address: 0x%06X\n" addressModeS'
-            putStrLn $ "File name: " ++ fname'
+            case fname flags of
+                Nothing     -> putStrLn "No data file name"
+                Just fname' -> putStrLn $ "Data file name: " ++ fname'
             putStrLn $ "Input message: " ++ (show $ intListFromHex content)
         else return ()
     if (hasCheckCrc flags) then
