@@ -84,15 +84,9 @@ main :: IO ()
 main = do
     (flags, rest) <- getArgs >>= compilerOpts
 
-    let argFname' = argFname flags
-    argsFromFile <- if null argFname' then
-            return ""
-        else
-            readFile argFname'
-    (flags, rest) <- if null argFname' then
-            return (flags, rest)
-        else
-            return ( words (argsFromFile)) >>= compilerOpts
+    (flags, rest) <- case argFname flags of
+        Nothing    -> return (flags, rest)
+        Just fname -> readFile fname >>= return . words >>= compilerOpts
 
     let addressModeS' = addressModeS flags
     let fname' = fname flags

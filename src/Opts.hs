@@ -87,11 +87,8 @@ fname = maybe defaultFname id . firstFname
         firstFname :: [Flag] -> Maybe String
         firstFname flags = foldr (\x y -> y <|> argFile x) Nothing flags
 
-argFname :: [Flag] -> String
-argFname = maybe defaultFname id . firstFname
-    where
-        firstFname :: [Flag] -> Maybe String
-        firstFname flags = foldr (\x y -> y <|> argArgFile x) Nothing flags
+argFname :: [Flag] -> Maybe String
+argFname flags = foldr (\x y -> y <|> argArgFile x) Nothing flags
 
 
 
