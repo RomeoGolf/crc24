@@ -15,9 +15,9 @@ import Data.Bits ((.|.), (.&.), shift, xor)
 preparedData :: [Word8]                 -- input list of bytes
                 -> (Word32, [Word8])    -- initial buffer and the rest list
 preparedData (x0:x1:x2:xs) = let
-    initBuf = (fromIntegral x0) `shift` 24
-                .|. (fromIntegral x1) `shift` 16
-                .|. (fromIntegral x2) `shift` 08
+    initBuf = fromIntegral x0 `shift` 24
+                .|. fromIntegral x1 `shift` 16
+                .|. fromIntegral x2 `shift` 08
     in (initBuf, xs)
 preparedData _ = error "The data is too short!"
 
@@ -29,12 +29,12 @@ crc24' (buf, x:xs) = let
     maskC = 0x80000000
     poly :: Word32
     poly = 0xFFF40900
-    buf' = buf .|. (fromIntegral x)
+    buf' = buf .|. fromIntegral x
     processedBuf :: Word32 -> Int -> Word32
     processedBuf b 0 = b
     processedBuf b cnt = let
         cBit = (b .&. maskC) /= 0
-        b' = b `shift` (1)
+        b' = b `shift` 1
         b'' = if cBit then b' `xor` poly else b'
         in processedBuf b'' (pred cnt)
     in crc24' (processedBuf buf' 8, xs)
