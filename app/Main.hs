@@ -106,7 +106,7 @@ main = do
             case fname flags of
                 Nothing     -> putStrLn "No data file name"
                 Just fname' -> putStrLn $ "Data file name: " ++ fname'
-            putStrLn $ "Input message: " ++ show (intListFromHex content)
+            putStrLn $ "Input message (hex): " ++ content
     when (hasCheckCrc flags) $
         printf "CRC24: 0x%06X\n" ((crc24 . byteListFromInt . intListFromHex) content)
     when (hasCalcCrc flags) $
