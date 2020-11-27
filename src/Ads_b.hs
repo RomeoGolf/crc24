@@ -11,7 +11,6 @@ import Numeric (readHex, showHex)
 import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
 
-
 preparedData :: [Word8]                 -- input list of bytes
                 -> (Word32, [Word8])    -- initial buffer and the rest list
 preparedData (x0:x1:x2:xs) = let
