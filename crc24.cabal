@@ -4,13 +4,13 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 260173d521debb54920996deb1ff5021f61a207f2773901702f9c2b0039e1727
+-- hash: 6c9a978a08fdf6e039a80d822b9331d0a54a065e7ea22a3f59d063788e8362dd
 
-name:           test
+name:           crc24
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/test#readme>
-homepage:       https://github.com/githubuser/test#readme
-bug-reports:    https://github.com/githubuser/test/issues
+description:    Please see the README on GitHub at <https://github.com/githubuser/crc24#readme>
+homepage:       https://github.com/githubuser/crc24#readme
+bug-reports:    https://github.com/githubuser/crc24/issues
 author:         Author name here
 maintainer:     example@example.com
 copyright:      2020 Author name here
@@ -23,14 +23,14 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/test
+  location: https://github.com/githubuser/crc24
 
 library
   exposed-modules:
       Ads_b
       Opts
   other-modules:
-      Paths_test
+      Paths_crc24
   hs-source-dirs:
       src
   build-depends:
@@ -42,10 +42,10 @@ library
     , tasty >=1.2.3 && <2
   default-language: Haskell2010
 
-executable test-exe
+executable crc24-exe
   main-is: Main.hs
   other-modules:
-      Paths_test
+      Paths_crc24
   hs-source-dirs:
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
@@ -53,17 +53,17 @@ executable test-exe
       HUnit >=0.1 && <3
     , QuickCheck >=2.13.2 && <5
     , base >=4.7 && <5
+    , crc24
     , doctest >=0.16.3 && <3
     , hspec >=2.7.4 && <3
     , tasty >=1.2.3 && <2
-    , test
   default-language: Haskell2010
 
-test-suite test-test
+test-suite crc24-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_test
+      Paths_crc24
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
@@ -71,8 +71,8 @@ test-suite test-test
       HUnit >=0.1 && <3
     , QuickCheck >=2.13.2 && <5
     , base >=4.7 && <5
+    , crc24
     , doctest >=0.16.3 && <3
     , hspec >=2.7.4 && <3
     , tasty >=1.2.3 && <2
-    , test
   default-language: Haskell2010
