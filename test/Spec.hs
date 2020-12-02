@@ -2,6 +2,9 @@
 
 import Test.QuickCheck
 import Test.HUnit
+import Test.Tasty
+import Test.Hspec
+import Test.DocTest
 
 import Ads_b
 
