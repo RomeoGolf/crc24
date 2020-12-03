@@ -93,6 +93,13 @@ testApDf2= TestCase (assertEqual "for DF AP (2):" (ap3) (apFieldForDownFormat te
 testApDf3= TestCase (assertEqual "for DF AP (3):" (ap1) (apFieldForDownFormat testMsg4 testAddrDf3))
 testApDf4= TestCase (assertEqual "for DF AP (4):" (ap3) (apFieldForDownFormat testMsg4 testAddrDf4))
 
+testApDf'1 = TestCase (assertEqual "for DF AP ('1):" (0) (apFieldForDownFormat [ 0x98, 0x60, 0x57, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] 0))
+testApDf'2 = TestCase (assertEqual "for DF AP ('2):" (0) (apFieldForDownFormat [ 0x00, 0x00, 0x00, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] 0x576098))
+testApDf'3 = TestCase (assertEqual "for DF AP ('2):" (0) (apFieldForDownFormat [ 166, 85, 122, 35, 32, 77, 93 ] 0))
+testApDf'4 = TestCase (assertEqual "for DF AP ('2):" (0) (apFieldForDownFormat [ 0x8D, 0x07, 0x3F, 0x31, 0x22, 0x11, 0x5F ] 0))
+testApDf'5 = TestCase (assertEqual "for DF AP ('2):" (0) (apFieldForDownFormat  [ 0x00, 0x00, 0x00, 0x31, 0x22, 0x11, 0x5F ] 0x3F078D))
+testApDf'6 = TestCase (assertEqual "for DF AP ('2):" (0) (apFieldForDownFormat  [ 0x00, 0x00, 0x00, 0x00, 0x00, 0xa4, 0x30, 0x00, 0xb0, 0x8d, 0x37, 0x0b, 0x00, 0xA0 ] 0x98F94F))
+
 tests = TestList [TestLabel "crc24 main" testCrc24
         , TestLabel "calc uplink AP 1" testAp1
         , TestLabel "calc uplink AP 2" testAp2
@@ -102,6 +109,12 @@ tests = TestList [TestLabel "crc24 main" testCrc24
         , TestLabel "calc downlink AP 2" testApDf2
         , TestLabel "calc downlink AP 3" testApDf3
         , TestLabel "calc downlink AP 4" testApDf4
+        , TestLabel "calc downlink AP '1" testApDf'1
+        , TestLabel "calc downlink AP '2" testApDf'2
+        , TestLabel "calc downlink AP '2" testApDf'3
+        , TestLabel "calc downlink AP '2" testApDf'4
+        , TestLabel "calc downlink AP '2" testApDf'5
+        , TestLabel "calc downlink AP '2" testApDf'6
         , TestLabel "crc24-1" testCrc1, TestLabel "crc24-2" testCrc2
         , TestLabel "crc24-3" testCrc3, TestLabel "crc24-4" testCrc4
         , TestLabel "encode addr test 2" testEncAddr2
