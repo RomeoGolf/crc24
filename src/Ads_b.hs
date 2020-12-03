@@ -6,7 +6,8 @@ module Ads_b
     crc24XorOut,
     crc24DataOnlyXorOut,
     encodedAddress,
-    apFieldForUpFormat
+    apFieldForUpFormat,
+    apFieldForDownFormat
     ) where
 
 import Numeric (readHex, showHex)
@@ -116,3 +117,9 @@ apFieldForUpFormat bytes addr = let
     addr' = encodedAddress addr
     in crc `xor` addr'
 
+apFieldForDownFormat :: [Word8]   -- the input bytes
+                      -> Word32   -- the MODE-S address
+                      -> Word32   -- AP field
+apFieldForDownFormat bytes addr = let
+    crc = crc24 bytes
+    in crc `xor` addr
