@@ -4,16 +4,16 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6c9a978a08fdf6e039a80d822b9331d0a54a065e7ea22a3f59d063788e8362dd
+-- hash: 050dd89ff1235feb4bcd7ef4d33d000d5e47f95dde54cdeea17facd834f0ffbe
 
 name:           crc24
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/crc24#readme>
-homepage:       https://github.com/githubuser/crc24#readme
-bug-reports:    https://github.com/githubuser/crc24/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2020 Author name here
+description:    Please see the README on GitHub at https://github.com/RomeoGolf/crc24#readme>
+homepage:       https://github.com/RomeoGolf/crc24#readme
+bug-reports:    https://github.com/RomeoGolf/crc24/issues
+author:         RomeoGolf
+maintainer:     triangulumsoft@gmail.com
+copyright:      2020 RomeoGolf
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -23,7 +23,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/crc24
+  location: https://github.com/RomeoGolf/crc24
 
 library
   exposed-modules:
