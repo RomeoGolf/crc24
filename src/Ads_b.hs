@@ -13,6 +13,8 @@ import Numeric (readHex, showHex)
 import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
 
+mask24bits = 0x00FFFFFF
+
 preparedData :: [Word8]                 -- input list of bytes
                 -> (Word32, [Word8])    -- initial buffer and the rest list
 preparedData (x0:x1:x2:xs) = let
@@ -48,7 +50,7 @@ crc24XorOut ::
             Word32      -- Data for XOR
          -> [Word8]     -- input bytes list with 3 zero least bytes
          -> Word32      -- crc24 in 3 leasb bytes
-crc24XorOut xorData msg = crc24 msg `xor` (xorData .&. 0xFFFFFF)
+crc24XorOut xorData msg = crc24 msg `xor` (xorData .&. mask24bits)
 
 testData :: [Word8]
 testData = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
@@ -59,14 +61,14 @@ crc24DataOnly :: [Word8] -> Word32
 crc24DataOnly xs = crc24 $ 0:0:0:xs
 
 crc24DataOnlyXorOut :: Word32 -> [Word8] -> Word32
-crc24DataOnlyXorOut xorData xs = (.&.) 0xFFFFFF $ crc24DataOnly xs `xor` xorData
+crc24DataOnlyXorOut xorData xs = (.&.) mask24bits $ crc24DataOnly xs `xor` xorData
 
 encodedAddress' :: Word32       -- the MODE-S address
                    -> Word32    -- the CRC24 polynom
                    -> Word32    -- the buffer for a result
                    -> Int       -- the counter for recurrent invoking
                    -> Word32    -- the encoded address
-encodedAddress' addr poly buff 0 = buff .&. 0x00FFFFFF     -- least 24 bits
+encodedAddress' addr poly buff 0 = buff .&. mask24bits -- least 24 bits
 encodedAddress' addr poly buff cnt = let
     maskC :: Word32
     maskC = 0x01000000
@@ -78,7 +80,7 @@ encodedAddress' addr poly buff cnt = let
 encodedAddress :: Word32        -- the MODE-S address
                   -> Word32     -- the encoded address
 encodedAddress addr = encodedAddress' addr poly 0 24 where
-    addr' = addr .&. 0xFFFFFF
+    addr' = addr .&. mask24bits
     poly :: Word32
     poly = 0x01FFF409
 
