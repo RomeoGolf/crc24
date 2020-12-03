@@ -56,27 +56,20 @@ crc2 = 0xC88294
 crc3 = 0x2078CE
 crc4 = 0x0B154F
 
-
 ap1 = 0
 ap2 = 0xAAAAAA
 ap3 = 0
 ap4 = 0xAAAAAA
-
-
-addr1 = 0xC051F6
-addr2 = 0x3FABF2
-addr3 = 0xACC555
-addr4 = 0x533F51
 
 encAddr1 = 0x80665F
 encAddr2 = 0x2ACCF5
 encAddr3 = 0xC88294
 encAddr4 = 0x62283E
 
-testEncAddr1 = TestCase (assertEqual "encode address (1):" encAddr1 (encodedAddress addr1))
-testEncAddr2 = TestCase (assertEqual "encode address (2):" encAddr2 (encodedAddress addr2))
-testEncAddr3 = TestCase (assertEqual "encode address (3):" encAddr3 (encodedAddress addr3))
-testEncAddr4 = TestCase (assertEqual "encode address (4):" encAddr4 (encodedAddress addr4))
+testEncAddr1 = TestCase (assertEqual "encode address (1):" encAddr1 (encodedAddress testAddr1))
+testEncAddr2 = TestCase (assertEqual "encode address (2):" encAddr2 (encodedAddress testAddr2))
+testEncAddr3 = TestCase (assertEqual "encode address (3):" encAddr3 (encodedAddress testAddr3))
+testEncAddr4 = TestCase (assertEqual "encode address (4):" encAddr4 (encodedAddress testAddr4))
 
 testCrc24 = TestCase (assertEqual "test CRC24 (main):" check (crc24DataOnly testData))
 
@@ -85,10 +78,11 @@ testCrc2 = TestCase (assertEqual "for crc24 (2):" (crc2) (crc24 testMsg2))
 testCrc3 = TestCase (assertEqual "for crc24 (3):" (crc3) (crc24 testMsg3))
 testCrc4 = TestCase (assertEqual "for crc24 (4):" (crc4) (crc24 testMsg4))
 
-testAp1= TestCase (assertEqual "for AP (1):" (ap1) (apFieldForUpFormat testMsg1 addr1))
-testAp2= TestCase (assertEqual "for AP (2):" (ap2) (apFieldForUpFormat testMsg1 addr2))
-testAp3= TestCase (assertEqual "for AP (3):" (ap3) (apFieldForUpFormat testMsg2 addr3))
-testAp4= TestCase (assertEqual "for AP (4):" (ap4) (apFieldForUpFormat testMsg2 addr4))
+testAp1= TestCase (assertEqual "for AP (1):" (ap1) (apFieldForUpFormat testMsg1 testAddr1))
+testAp2= TestCase (assertEqual "for AP (2):" (ap2) (apFieldForUpFormat testMsg1 testAddr2))
+testAp3= TestCase (assertEqual "for AP (3):" (ap3) (apFieldForUpFormat testMsg2 testAddr3))
+testAp4= TestCase (assertEqual "for AP (4):" (ap4) (apFieldForUpFormat testMsg2 testAddr4))
+
 
 
 tests = TestList [TestLabel "crc24 main" testCrc24
