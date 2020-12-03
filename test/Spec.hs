@@ -68,9 +68,9 @@ testEncAddr2 = TestCase (assertEqual "encode address (2):" encAddr2 (encodedAddr
 testEncAddr3 = TestCase (assertEqual "encode address (3):" encAddr3 (encodedAddress addr3))
 testEncAddr4 = TestCase (assertEqual "encode address (4):" encAddr4 (encodedAddress addr4))
 
-test1 = TestCase (assertEqual "for crc24 (1):" (crc2) (crc24 testUf2))
-test2 = TestCase (assertEqual "for crc24 (2):" (crc3) (crc24 testUf3))
-tests = TestList [TestLabel "test1" test1, TestLabel "test2" test2
+testCrc1 = TestCase (assertEqual "for crc24 (1):" (crc2) (crc24 testUf2))
+testCrc2 = TestCase (assertEqual "for crc24 (2):" (crc3) (crc24 testUf3))
+tests = TestList [TestLabel "crc24-1" testCrc1, TestLabel "crc24-2" testCrc2
         , TestLabel "encode addr test 2" testEncAddr2
         , TestLabel "encode addr test 3" testEncAddr3
         , TestLabel "encode addr test 4" testEncAddr4]
