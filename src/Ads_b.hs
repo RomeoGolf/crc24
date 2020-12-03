@@ -3,6 +3,8 @@ module Ads_b
     (
     crc24,
     crc24DataOnly,
+    crc24XorOut,
+    crc24DataOnlyXorOut,
     encodedAddress,
     apFieldForUpFormat
     ) where
@@ -42,6 +44,12 @@ crc24 :: [Word8]        -- input bytes list with 3 zero least bytes
          -> Word32      -- crc24 in 3 leasb bytes
 crc24 = crc24' . preparedData . reverse
 
+crc24XorOut ::
+            Word32      -- Data for XOR
+         -> [Word8]     -- input bytes list with 3 zero least bytes
+         -> Word32      -- crc24 in 3 leasb bytes
+crc24XorOut xorData msg = crc24 msg `xor` xorData
+
 testData :: [Word8]
 testData = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
 testData' :: [Word8]
@@ -49,6 +57,9 @@ testData' = [0, 0, 0, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
 
 crc24DataOnly :: [Word8] -> Word32
 crc24DataOnly xs = crc24 $ 0:0:0:xs
+
+crc24DataOnlyXorOut :: Word32 -> [Word8] -> Word32
+crc24DataOnlyXorOut xorData xs = crc24DataOnly xs `xor` xorData
 
 encodedAddress' :: Word32       -- the MODE-S address
                    -> Word32    -- the CRC24 polynom

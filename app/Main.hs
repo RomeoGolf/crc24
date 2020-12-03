@@ -99,6 +99,7 @@ main = do
         Just fname' -> readFile fname'
 
     when (hasVersion flags) $ putStrLn "Version: 0.1"
+
     when (hasShowInput flags) $ do
             case addressModeS flags of
                 Nothing     -> printf "No address in the options!\nDefault all-call address 0x%06X will be used.\n" defaultAddressModeS
@@ -107,15 +108,43 @@ main = do
                 Nothing     -> putStrLn "No data file name"
                 Just fname' -> putStrLn $ "Data file name: " ++ fname'
             putStrLn $ "Input message (hex): " ++ content
+
     when (hasCheckCrc flags) $
-        printf "CRC24: 0x%06X\n" ((crc24 . byteListFromInt . intListFromHex) content)
+        printf "CRC24: 0x%06X\n" $ (crc24 . byteListFromInt . intListFromHex) content
+
+    when (hasCheckCrcUplink flags) $ do
+        case addressModeS flags of
+            Nothing     -> printf "Warning: Default all-call address 0x%06X is used.\n" defaultAddressModeS
+            Just fname' -> return ()
+        printf "CRC24 uplink: 0x%06X\n" $ (crc24XorOut (encodedAddress addressModeS') . byteListFromInt . intListFromHex) content
+
+    when (hasCheckCrcDownlink flags) $ do
+        case addressModeS flags of
+            Nothing     -> printf "Warning: Default all-call address 0x%06X is used.\n" defaultAddressModeS
+            Just fname' -> return ()
+        printf "CRC24 downlink: 0x%06X\n" $ (crc24XorOut addressModeS' . byteListFromInt . intListFromHex) content
+
     when (hasCalcCrc flags) $
         printf "CRC24: 0x%06X\n" ((crc24DataOnly . byteListFromInt . intListFromHex) content)
+
+    when (hasCalcCrcDownlink flags) $ do
+        case addressModeS flags of
+            Nothing     -> printf "Warning: Default all-call address 0x%06X is used.\n" defaultAddressModeS
+            Just fname' -> return ()
+        printf "CRC24 downlink: 0x%06X\n" $ (crc24DataOnlyXorOut addressModeS' . byteListFromInt . intListFromHex) content
+
+    when (hasCalcCrcUplink flags) $ do
+        case addressModeS flags of
+            Nothing     -> printf "Warning: Default all-call address 0x%06X is used.\n" defaultAddressModeS
+            Just fname' -> return ()
+        printf "CRC24 uplink: 0x%06X\n" $ (crc24DataOnlyXorOut (encodedAddress addressModeS') . byteListFromInt . intListFromHex) content
+
     when (hasEncodeAddress flags) $ do
         case addressModeS flags of
             Nothing     -> printf "Warning: Default all-call address 0x%06X is used.\n" defaultAddressModeS
             Just fname' -> return ()
         printf "Encoded Address: 0x%06X\n" (encodedAddress addressModeS')
+
     when (hasCalcUplinkApField flags) $ do
         case addressModeS flags of
             Nothing     -> printf "Warning: Default all-call address 0x%06X is used.\n" defaultAddressModeS

@@ -13,7 +13,11 @@ defaultFname = ""
 
 data Flag
     = CheckCrc
+    | CheckCrcUplink
+    | CheckCrcDownlink
     | CalcCrc
+    | CalcCrcUplink
+    | CalcCrcDownlink
     | EncodeAddress
     | CalcUplinkApField
     | ShowInput
@@ -25,10 +29,20 @@ data Flag
     deriving (Eq, Ord, Show)
 
 flagDescr =
-       [Option []    ["check-crc"]    (NoArg CheckCrc)
+       [Option []    ["check-crc"]              (NoArg CheckCrc)
             "Check CRC-24 for an input data."
-       ,Option []    ["calc-crc"]     (NoArg CalcCrc)
+       ,Option []    ["check-crc-uplink"]       (NoArg CheckCrcUplink)
+            "Check CRC-24 for an input data."
+       ,Option []    ["check-crc-downlink"]     (NoArg CheckCrcDownlink)
+            "Check CRC-24 for an input data."
+
+       ,Option []    ["calc-crc"]               (NoArg CalcCrc)
             "Calculate CRC-24 for an input data."
+       ,Option []    ["calc-crc-uplink"]        (NoArg CalcCrcUplink)
+            "Calculate CRC-24 for an input data."
+       ,Option []    ["calc-crc-downlink"]      (NoArg CalcCrcDownlink)
+            "Calculate CRC-24 for an input data."
+
        ,Option ['e'] ["encode-addr"]  (NoArg EncodeAddress)
             "Encode MODE-S uplink address."
        ,Option []    ["calc-ap"]      (NoArg CalcUplinkApField)
@@ -57,10 +71,16 @@ compilerOpts argv =
        (_,_,errs) -> ioError (userError (concat errs ++ usageInfo header flagDescr))
     where header = "Usage: <this-exe> [OPTION...] files..."
 
-hasCheckCrc, hasCalcCrc, hasEncodeAddress, hasShowInput,
-    hasCalcUplinkApField, hasHelp, hasVersion :: [Flag] -> Bool
+hasCheckCrc, hasCheckCrcUplink, hasCheckCrcDownlink,
+    hasCalcCrc, hasCalcCrcUplink, hasCalcCrcDownlink,
+    hasEncodeAddress, hasShowInput, hasCalcUplinkApField,
+    hasHelp, hasVersion :: [Flag] -> Bool
 hasCheckCrc             = elem CheckCrc
+hasCheckCrcUplink       = elem CheckCrcUplink
+hasCheckCrcDownlink     = elem CheckCrcDownlink
 hasCalcCrc              = elem CalcCrc
+hasCalcCrcUplink        = elem CalcCrcUplink
+hasCalcCrcDownlink      = elem CalcCrcDownlink
 hasEncodeAddress        = elem EncodeAddress
 hasCalcUplinkApField    = elem CalcUplinkApField
 hasHelp                 = elem Help
