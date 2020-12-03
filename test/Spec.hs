@@ -21,6 +21,13 @@ prop_Crc24 xs = crc24 (x1:x2:x3:xs) == 0 where
     x2 = fromIntegral ((crc' `shift` (-8)) Data.Bits..&. 0xFF)
     x3 = fromIntegral ((crc' `shift` (-16)) Data.Bits..&. 0xFF)
 
+prop_Crc24XorOutUplink :: Word32 -> [Word8] -> Bool
+prop_Crc24XorOutUplink xorData xs = crc24XorOut xorData' (x1:x2:x3:xs) == 0 where
+    xorData' = xorData --    Data.Bits..&. 0xFFFFFF
+    crc' = crc24DataOnlyXorOut xorData' xs
+    x1 = fromIntegral (crc' Data.Bits..&. 0xFF)
+    x2 = fromIntegral ((crc' `shift` (-8)) Data.Bits..&. 0xFF)
+    x3 = fromIntegral ((crc' `shift` (-16)) Data.Bits..&. 0xFF)
 
 {-UF/DF 4:    0x20 00 00 00 00 00 00,                         CRC-24 = 80665F-}
 {-UF/DF 5:    0x28 00 00 00 00 00 00,                         CRC-24 = 2078CE-}
