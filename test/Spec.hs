@@ -38,22 +38,14 @@ testData :: [Word8]
 testData = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
 check = 0xA05E66
 
-testUf2 :: [Word8]
-testUf2 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20]
-{-addr2, -}
-crc2 :: Word32
-{-addr2 = 0x003FABF2-}
-crc2 = 0x80665F
-res2 = 0xAAAAAA
+testMsg1, testMsg2 :: [Word8]
+testMsg1 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20]
+testMsg2 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA0]
 
 
-testUf3 :: [Word8]
-testUf3 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA0]
-{-addr3, -}
-crc3 :: Word32
-{-addr3 = 0xACC555-}
-crc3 = 0xC88294
-res3 = 0
+crc1, crc2 :: Word32
+crc1 = 0x80665F
+crc2 = 0xC88294
 
 
 
@@ -77,8 +69,8 @@ testCrc24 = TestCase (assertEqual "test CRC24 (main):" check (crc24DataOnly test
 
 
 
-testCrc1 = TestCase (assertEqual "for crc24 (1):" (crc2) (crc24 testUf2))
-testCrc2 = TestCase (assertEqual "for crc24 (2):" (crc3) (crc24 testUf3))
+testCrc1 = TestCase (assertEqual "for crc24 (1):" (crc1) (crc24 testMsg1))
+testCrc2 = TestCase (assertEqual "for crc24 (2):" (crc2) (crc24 testMsg2))
 tests = TestList [TestLabel "crc24 main" testCrc24
         , TestLabel "crc24-1" testCrc1, TestLabel "crc24-2" testCrc2
         , TestLabel "encode addr test 2" testEncAddr2
