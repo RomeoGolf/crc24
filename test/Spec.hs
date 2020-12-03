@@ -34,6 +34,10 @@ prop_Crc24XorOutUplink xorData xs = crc24XorOut xorData' (x1:x2:x3:xs) == 0 wher
 {-UF/DF 20:   0xA0 00 00 00 00 00 00 00 00 00 00 00 00 00,    CRC-24 = C88294-}
 {-UF/DF 21:   0xA8 00 00 00 00 00 00 00 00 00 00 00 00 00,    CRC-24 = 0B154F-}
 
+testData :: [Word8]
+testData = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
+check = 0xA05E66
+
 testUf2 :: [Word8]
 testUf2 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20]
 {-addr2, -}
@@ -68,9 +72,15 @@ testEncAddr2 = TestCase (assertEqual "encode address (2):" encAddr2 (encodedAddr
 testEncAddr3 = TestCase (assertEqual "encode address (3):" encAddr3 (encodedAddress addr3))
 testEncAddr4 = TestCase (assertEqual "encode address (4):" encAddr4 (encodedAddress addr4))
 
+testCrc24 = TestCase (assertEqual "test CRC24 (main):" check (crc24DataOnly testData))
+
+
+
+
 testCrc1 = TestCase (assertEqual "for crc24 (1):" (crc2) (crc24 testUf2))
 testCrc2 = TestCase (assertEqual "for crc24 (2):" (crc3) (crc24 testUf3))
-tests = TestList [TestLabel "crc24-1" testCrc1, TestLabel "crc24-2" testCrc2
+tests = TestList [TestLabel "crc24 main" testCrc24
+        , TestLabel "crc24-1" testCrc1, TestLabel "crc24-2" testCrc2
         , TestLabel "encode addr test 2" testEncAddr2
         , TestLabel "encode addr test 3" testEncAddr3
         , TestLabel "encode addr test 4" testEncAddr4]
