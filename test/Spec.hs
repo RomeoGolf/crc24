@@ -50,6 +50,12 @@ testAddr2 = 0x003FABF2
 testAddr3 = 0x00ACC555
 testAddr4 = 0x00533F51
 
+testAddrDf1, testAddrDf2, testAddrDf3, testAddrDf4 :: Word32
+testAddrDf1 = 0x002078CE
+testAddrDf2 = 0x00752D9B
+testAddrDf3 = 0x000b154F
+testAddrDf4 = 0x005E401A
+
 crc1, crc2, crc3, crc4 :: Word32
 crc1 = 0x80665F
 crc2 = 0xC88294
@@ -58,8 +64,7 @@ crc4 = 0x0B154F
 
 ap1 = 0
 ap2 = 0xAAAAAA
-ap3 = 0
-ap4 = 0xAAAAAA
+ap3 = 0x555555
 
 encAddr1 = 0x80665F
 encAddr2 = 0x2ACCF5
@@ -80,16 +85,23 @@ testCrc4 = TestCase (assertEqual "for crc24 (4):" (crc4) (crc24 testMsg4))
 
 testAp1= TestCase (assertEqual "for AP (1):" (ap1) (apFieldForUpFormat testMsg1 testAddr1))
 testAp2= TestCase (assertEqual "for AP (2):" (ap2) (apFieldForUpFormat testMsg1 testAddr2))
-testAp3= TestCase (assertEqual "for AP (3):" (ap3) (apFieldForUpFormat testMsg2 testAddr3))
-testAp4= TestCase (assertEqual "for AP (4):" (ap4) (apFieldForUpFormat testMsg2 testAddr4))
+testAp3= TestCase (assertEqual "for AP (3):" (ap1) (apFieldForUpFormat testMsg2 testAddr3))
+testAp4= TestCase (assertEqual "for AP (4):" (ap2) (apFieldForUpFormat testMsg2 testAddr4))
 
-
+testApDf1= TestCase (assertEqual "for DF AP (1):" (ap1) (apFieldForDownFormat testMsg3 testAddrDf1))
+testApDf2= TestCase (assertEqual "for DF AP (2):" (ap3) (apFieldForDownFormat testMsg3 testAddrDf2))
+testApDf3= TestCase (assertEqual "for DF AP (3):" (ap1) (apFieldForDownFormat testMsg4 testAddrDf3))
+testApDf4= TestCase (assertEqual "for DF AP (4):" (ap3) (apFieldForDownFormat testMsg4 testAddrDf4))
 
 tests = TestList [TestLabel "crc24 main" testCrc24
         , TestLabel "calc uplink AP 1" testAp1
         , TestLabel "calc uplink AP 2" testAp2
         , TestLabel "calc uplink AP 3" testAp3
         , TestLabel "calc uplink AP 4" testAp4
+        , TestLabel "calc downlink AP 1" testApDf1
+        , TestLabel "calc downlink AP 2" testApDf2
+        , TestLabel "calc downlink AP 3" testApDf3
+        , TestLabel "calc downlink AP 4" testApDf4
         , TestLabel "crc24-1" testCrc1, TestLabel "crc24-2" testCrc2
         , TestLabel "crc24-3" testCrc3, TestLabel "crc24-4" testCrc4
         , TestLabel "encode addr test 2" testEncAddr2
