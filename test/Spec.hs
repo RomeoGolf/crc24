@@ -38,15 +38,29 @@ testData :: [Word8]
 testData = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
 check = 0xA05E66
 
-testMsg1, testMsg2 :: [Word8]
+testMsg1, testMsg2, testMsg3, testMsg4 :: [Word8]
 testMsg1 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20]
 testMsg2 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA0]
+testMsg3 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x28]
+testMsg4 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA8]
 
+testAddr1, testAddr2, testAddr3, testAddr4 :: Word32
+testAddr1 = 0x00C051F6
+testAddr2 = 0x003FABF2
+testAddr3 = 0x00ACC555
+testAddr4 = 0x00533F51
 
-crc1, crc2 :: Word32
+crc1, crc2, crc3, crc4 :: Word32
 crc1 = 0x80665F
 crc2 = 0xC88294
+crc3 = 0x2078CE
+crc4 = 0x0B154F
 
+
+ap1 = 0
+ap2 = 0xAAAAAA
+ap3 = 0
+ap4 = 0xAAAAAA
 
 
 addr1 = 0xC051F6
@@ -66,13 +80,24 @@ testEncAddr4 = TestCase (assertEqual "encode address (4):" encAddr4 (encodedAddr
 
 testCrc24 = TestCase (assertEqual "test CRC24 (main):" check (crc24DataOnly testData))
 
-
-
-
 testCrc1 = TestCase (assertEqual "for crc24 (1):" (crc1) (crc24 testMsg1))
 testCrc2 = TestCase (assertEqual "for crc24 (2):" (crc2) (crc24 testMsg2))
+testCrc3 = TestCase (assertEqual "for crc24 (3):" (crc3) (crc24 testMsg3))
+testCrc4 = TestCase (assertEqual "for crc24 (4):" (crc4) (crc24 testMsg4))
+
+testAp1= TestCase (assertEqual "for AP (1):" (ap1) (apFieldForUpFormat testMsg1 addr1))
+testAp2= TestCase (assertEqual "for AP (2):" (ap2) (apFieldForUpFormat testMsg1 addr2))
+testAp3= TestCase (assertEqual "for AP (3):" (ap3) (apFieldForUpFormat testMsg2 addr3))
+testAp4= TestCase (assertEqual "for AP (4):" (ap4) (apFieldForUpFormat testMsg2 addr4))
+
+
 tests = TestList [TestLabel "crc24 main" testCrc24
+        , TestLabel "calc uplink AP 1" testAp1
+        , TestLabel "calc uplink AP 2" testAp2
+        , TestLabel "calc uplink AP 3" testAp3
+        , TestLabel "calc uplink AP 4" testAp4
         , TestLabel "crc24-1" testCrc1, TestLabel "crc24-2" testCrc2
+        , TestLabel "crc24-3" testCrc3, TestLabel "crc24-4" testCrc4
         , TestLabel "encode addr test 2" testEncAddr2
         , TestLabel "encode addr test 3" testEncAddr3
         , TestLabel "encode addr test 4" testEncAddr4]
