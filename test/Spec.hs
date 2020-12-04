@@ -1,18 +1,11 @@
-{-# LANGUAGE TemplateHaskell #-}
 
 import Test.QuickCheck
-import Test.HUnit
-import Test.Tasty
 import Test.Hspec
-import Test.DocTest
 
 import Ads_b
 
 import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
-
-prop_reverseReverse :: [Int] -> Bool
-prop_reverseReverse xs = reverse (reverse xs) == xs
 
 prop_Crc24 :: [Word8] -> Bool
 prop_Crc24 xs = crc24 (x1:x2:x3:xs) == 0 where
@@ -28,11 +21,6 @@ prop_Crc24XorOutUplink xorData xs = crc24XorOut xorData' (x1:x2:x3:xs) == 0 wher
     x1 = fromIntegral (crc' Data.Bits..&. 0xFF)
     x2 = fromIntegral ((crc' `shift` (-8)) Data.Bits..&. 0xFF)
     x3 = fromIntegral ((crc' `shift` (-16)) Data.Bits..&. 0xFF)
-
-{-UF/DF 4:    0x20 00 00 00 00 00 00,                         CRC-24 = 80665F-}
-{-UF/DF 5:    0x28 00 00 00 00 00 00,                         CRC-24 = 2078CE-}
-{-UF/DF 20:   0xA0 00 00 00 00 00 00 00 00 00 00 00 00 00,    CRC-24 = C88294-}
-{-UF/DF 21:   0xA8 00 00 00 00 00 00 00 00 00 00 00 00 00,    CRC-24 = 0B154F-}
 
 testData :: [Word8]
 testData = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
@@ -71,61 +59,63 @@ encAddr2 = 0x2ACCF5
 encAddr3 = 0xC88294
 encAddr4 = 0x62283E
 
-testEncAddr1 = TestCase (assertEqual "encode address (1):" encAddr1 (encodedAddress testAddr1))
-testEncAddr2 = TestCase (assertEqual "encode address (2):" encAddr2 (encodedAddress testAddr2))
-testEncAddr3 = TestCase (assertEqual "encode address (3):" encAddr3 (encodedAddress testAddr3))
-testEncAddr4 = TestCase (assertEqual "encode address (4):" encAddr4 (encodedAddress testAddr4))
+main :: IO ()
+main = hspec $ do
+    describe "ADS-B" $ do
+        it "CRC24 calculation & checking" $
+            property $ prop_Crc24
+        it "CRC24 with XorOut calculation & checking" $
+            property $ prop_Crc24XorOutUplink
 
-testCrc24 = TestCase (assertEqual "test CRC24 (main):" check (crc24DataOnly testData))
+        it "CRC24 main test" $
+            crc24DataOnly testData `shouldBe` check
 
-testCrc1 = TestCase (assertEqual "for crc24 (1):" (crc1) (crc24 testMsg1))
-testCrc2 = TestCase (assertEqual "for crc24 (2):" (crc2) (crc24 testMsg2))
-testCrc3 = TestCase (assertEqual "for crc24 (3):" (crc3) (crc24 testMsg3))
-testCrc4 = TestCase (assertEqual "for crc24 (4):" (crc4) (crc24 testMsg4))
+        it "encode address 1" $
+            encodedAddress testAddr1 `shouldBe` encAddr1
+        it "encode address 2" $
+            encodedAddress testAddr2 `shouldBe` encAddr2
+        it "encode address 3" $
+            encodedAddress testAddr3 `shouldBe` encAddr3
+        it "encode address 4" $
+            encodedAddress testAddr4 `shouldBe` encAddr4
 
-testAp1= TestCase (assertEqual "for AP (1):" (ap1) (apFieldForUpFormat testMsg1 testAddr1))
-testAp2= TestCase (assertEqual "for AP (2):" (ap2) (apFieldForUpFormat testMsg1 testAddr2))
-testAp3= TestCase (assertEqual "for AP (3):" (ap1) (apFieldForUpFormat testMsg2 testAddr3))
-testAp4= TestCase (assertEqual "for AP (4):" (ap2) (apFieldForUpFormat testMsg2 testAddr4))
+        it "calc uplink AP field 1" $
+            apFieldForUpFormat testMsg1 testAddr1 `shouldBe` ap1
+        it "calc uplink AP field 2" $
+            apFieldForUpFormat testMsg1 testAddr2 `shouldBe` ap2
+        it "calc uplink AP field 3" $
+            apFieldForUpFormat testMsg2 testAddr3 `shouldBe` ap1
+        it "calc uplink AP field 4" $
+            apFieldForUpFormat testMsg2 testAddr4 `shouldBe` ap2
 
-testApDf1= TestCase (assertEqual "for DF AP (1):" (ap1) (apFieldForDownFormat testMsg3 testAddrDf1))
-testApDf2= TestCase (assertEqual "for DF AP (2):" (ap3) (apFieldForDownFormat testMsg3 testAddrDf2))
-testApDf3= TestCase (assertEqual "for DF AP (3):" (ap1) (apFieldForDownFormat testMsg4 testAddrDf3))
-testApDf4= TestCase (assertEqual "for DF AP (4):" (ap3) (apFieldForDownFormat testMsg4 testAddrDf4))
+        it "calc downlink AP field 1" $
+            apFieldForDownFormat testMsg3 testAddrDf1 `shouldBe` ap1
+        it "calc downlink AP field 2" $
+            apFieldForDownFormat testMsg3 testAddrDf2 `shouldBe` ap3
+        it "calc downlink AP field 3" $
+            apFieldForDownFormat testMsg4 testAddrDf3 `shouldBe` ap1
+        it "calc downlink AP field 4" $
+            apFieldForDownFormat testMsg4 testAddrDf4 `shouldBe` ap3
 
-testApDf'1 = TestCase (assertEqual "for DF AP ('1):" (0) (apFieldForDownFormat [ 0x98, 0x60, 0x57, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] 0))
-testApDf'2 = TestCase (assertEqual "for DF AP ('2):" (0) (apFieldForDownFormat [ 0x00, 0x00, 0x00, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] 0x576098))
-testApDf'3 = TestCase (assertEqual "for DF AP ('2):" (0) (apFieldForDownFormat [ 166, 85, 122, 35, 32, 77, 93 ] 0))
-testApDf'4 = TestCase (assertEqual "for DF AP ('2):" (0) (apFieldForDownFormat [ 0x8D, 0x07, 0x3F, 0x31, 0x22, 0x11, 0x5F ] 0))
-testApDf'5 = TestCase (assertEqual "for DF AP ('2):" (0) (apFieldForDownFormat  [ 0x00, 0x00, 0x00, 0x31, 0x22, 0x11, 0x5F ] 0x3F078D))
-testApDf'6 = TestCase (assertEqual "for DF AP ('2):" (0) (apFieldForDownFormat  [ 0x00, 0x00, 0x00, 0x00, 0x00, 0xa4, 0x30, 0x00, 0xb0, 0x8d, 0x37, 0x0b, 0x00, 0xA0 ] 0x98F94F))
+        it "check downlink AP field 1" $
+            apFieldForDownFormat [ 0x98, 0x60, 0x57, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] 0 `shouldBe` 0
+        it "check downlink AP field 2" $
+            apFieldForDownFormat [ 0x00, 0x00, 0x00, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] 0x576098 `shouldBe` 0
+        it "check downlink AP field 3" $
+            apFieldForDownFormat [ 166, 85, 122, 35, 32, 77, 93 ] 0 `shouldBe` 0
+        it "check downlink AP field 4" $
+            apFieldForDownFormat [ 0x8D, 0x07, 0x3F, 0x31, 0x22, 0x11, 0x5F ] 0 `shouldBe` 0
+        it "check downlink AP field 5" $
+            apFieldForDownFormat  [ 0x00, 0x00, 0x00, 0x31, 0x22, 0x11, 0x5F ] 0x3F078D `shouldBe` 0
+        it "check downlink AP field 6" $
+            apFieldForDownFormat  [ 0x00, 0x00, 0x00, 0x00, 0x00, 0xa4, 0x30, 0x00, 0xb0, 0x8d, 0x37, 0x0b, 0x00, 0xA0 ] 0x98F94F `shouldBe` 0
 
-tests = TestList [TestLabel "crc24 main" testCrc24
-        , TestLabel "calc uplink AP 1" testAp1
-        , TestLabel "calc uplink AP 2" testAp2
-        , TestLabel "calc uplink AP 3" testAp3
-        , TestLabel "calc uplink AP 4" testAp4
-        , TestLabel "calc downlink AP 1" testApDf1
-        , TestLabel "calc downlink AP 2" testApDf2
-        , TestLabel "calc downlink AP 3" testApDf3
-        , TestLabel "calc downlink AP 4" testApDf4
-        , TestLabel "calc downlink AP '1" testApDf'1
-        , TestLabel "calc downlink AP '2" testApDf'2
-        , TestLabel "calc downlink AP '2" testApDf'3
-        , TestLabel "calc downlink AP '2" testApDf'4
-        , TestLabel "calc downlink AP '2" testApDf'5
-        , TestLabel "calc downlink AP '2" testApDf'6
-        , TestLabel "crc24-1" testCrc1, TestLabel "crc24-2" testCrc2
-        , TestLabel "crc24-3" testCrc3, TestLabel "crc24-4" testCrc4
-        , TestLabel "encode addr test 2" testEncAddr2
-        , TestLabel "encode addr test 3" testEncAddr3
-        , TestLabel "encode addr test 4" testEncAddr4]
+        it "check CRC24 (1)" $
+            crc24 testMsg1 `shouldBe` crc1
+        it "check CRC24 (2)" $
+            crc24 testMsg2 `shouldBe` crc2
+        it "check CRC24 (3)" $
+            crc24 testMsg3 `shouldBe` crc3
+        it "check CRC24 (4)" $
+            crc24 testMsg4 `shouldBe` crc4
 
-
-return []
-{-main :: IO ()-}
-{-main = putStrLn "Test suite not yet implemented"-}
-main = do
-    $(quickCheckAll)
-    runTestTT tests
-{-main = quickCheck prop_Crc24-}
