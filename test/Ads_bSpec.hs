@@ -1,6 +1,6 @@
 module Ads_bSpec where
 
-import Test.QuickCheck
+import Test.QuickCheck hiding ((.|.), (.&.), shift, xor)
 import Test.Hspec
 
 import Ads_b
@@ -12,16 +12,16 @@ prop_Crc24 :: [Word8] -> Bool
 prop_Crc24 xs = crc24 (x1:x2:x3:xs) == 0 where
     crc' = crc24DataOnly xs
     x1 = fromIntegral (crc' .&. 0xFF)
-    x2 = fromIntegral ((crc' `shift` (-8)) Data.Bits..&. 0xFF)
-    x3 = fromIntegral ((crc' `shift` (-16)) Data.Bits..&. 0xFF)
+    x2 = fromIntegral ((crc' `shift` (-8)) .&. 0xFF)
+    x3 = fromIntegral ((crc' `shift` (-16)) .&. 0xFF)
 
 prop_Crc24XorOutUplink :: Word32 -> [Word8] -> Bool
 prop_Crc24XorOutUplink xorData xs = crc24XorOut xorData' (x1:x2:x3:xs) == 0 where
-    xorData' = xorData --    Data.Bits..&. 0xFFFFFF
+    xorData' = xorData --    .&. 0xFFFFFF
     crc' = crc24DataOnlyXorOut xorData' xs
-    x1 = fromIntegral (crc' Data.Bits..&. 0xFF)
-    x2 = fromIntegral ((crc' `shift` (-8)) Data.Bits..&. 0xFF)
-    x3 = fromIntegral ((crc' `shift` (-16)) Data.Bits..&. 0xFF)
+    x1 = fromIntegral (crc' .&. 0xFF)
+    x2 = fromIntegral ((crc' `shift` (-8)) .&. 0xFF)
+    x3 = fromIntegral ((crc' `shift` (-16)) .&. 0xFF)
 
 testData :: [Word8]
 testData = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
