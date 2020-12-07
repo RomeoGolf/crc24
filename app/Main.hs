@@ -72,9 +72,6 @@ module Main where
 import System.Environment (getArgs)
 import System.IO (readFile)
 import System.Console.GetOpt
-import Numeric (readHex, showHex)
-import Data.Word (Word8, Word32)
-import Data.Bits ((.|.), (.&.), shift, xor)
 import Text.Printf
 import Data.Maybe (fromMaybe)
 import Control.Monad (when)
@@ -150,12 +147,4 @@ main = do
             Nothing     -> printf "Warning: Default all-call address 0x%06X is used.\n" defaultAddressModeS
             Just fname' -> return ()
         printf "Uplink AP field: 0x%06X\n" (apFieldForUpFormat ((byteListFromInt . intListFromHex) content) addressModeS')
-
-
-intListFromHex :: String    -- hex bytes string (a least byte in the head)
-                  -> [Int]  -- list of bytes
-intListFromHex hexStr = map (fst . head . readHex) (words hexStr)
-
-byteListFromInt :: [Int] -> [Word8]
-byteListFromInt = map fromIntegral
 

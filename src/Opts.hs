@@ -4,6 +4,7 @@ module Opts where
 import System.Console.GetOpt
 import Data.Word (Word8, Word32)
 import Control.Applicative
+import Numeric (readHex, showHex)
 
 defaultAddressModeS :: Word32
 defaultAddressModeS = 0x00FFFFFF
@@ -107,5 +108,11 @@ fname = foldr (\x y -> y <|> argFile x) Nothing
 argFname :: [Flag] -> Maybe String
 argFname = foldr (\x y -> y <|> argArgFile x) Nothing
 
+intListFromHex :: String    -- hex bytes string (a least byte in the head)
+                  -> [Int]  -- list of bytes
+intListFromHex hexStr = map (fst . head . readHex) (words hexStr)
+
+byteListFromInt :: [Int] -> [Word8]
+byteListFromInt = map fromIntegral
 
 
