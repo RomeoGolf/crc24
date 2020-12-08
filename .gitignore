@@ -26,3 +26,4 @@ yesod-mysql.cabal
 bin/
 *.swp
 tags
+doc/
