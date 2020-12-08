@@ -9,7 +9,6 @@ module Ads_b
     apFieldForUpFormat,
     apFieldForDownFormat,
     Crc24CheckResult (CrcIsOk, Fail)
-    {-Fail-}
     ) where
 
 import Numeric (readHex, showHex)
@@ -66,11 +65,6 @@ crc24XorOut xorData msg = let
         0 -> CrcIsOk
         _ -> Fail result
 
-testData :: [Word8]
-testData = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
-testData' :: [Word8]
-testData' = [0, 0, 0, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
-
 crc24DataOnly :: [Word8] -> Word32
 crc24DataOnly xs = (crc24' . preparedData . reverse) $ 0:0:0:xs
 
@@ -94,7 +88,6 @@ encodedAddress' addr poly buff cnt = let
 encodedAddress :: Word32        -- the MODE-S address
                   -> Word32     -- the encoded address
 encodedAddress addr = encodedAddress' addr poly 0 24 where
-    addr' = addr .&. mask24bits
     poly :: Word32
     poly = 0x01FFF409
 
