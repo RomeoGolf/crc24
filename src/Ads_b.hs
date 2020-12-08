@@ -1,14 +1,14 @@
 
 module Ads_b
     (
-    crc24,
-    crc24DataOnly,
-    crc24XorOut,
-    crc24DataOnlyXorOut,
-    encodedAddress,
-    apFieldForUpFormat,
-    apFieldForDownFormat,
-    Crc24CheckResult (CrcIsOk, Fail)
+      crc24
+    , crc24DataOnly
+    , crc24XorOut
+    , crc24DataOnlyXorOut
+    , encodedAddress
+    , apFieldForUpFormat
+    , apFieldForDownFormat
+    , Crc24CheckResult (CrcIsOk, Fail)
     , errorMessagePrepareData
     ) where
 
