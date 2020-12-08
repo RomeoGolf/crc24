@@ -132,17 +132,19 @@ crc24' (buf, x:xs) = let
         in processedBuf b'' (pred cnt)
     in crc24' (processedBuf buf' 8, xs)
 
-crc24 :: [Word8]        -- input bytes list with 3 zero least bytes
-         -> Crc24CheckResult
+-- | The <crc24> functions calculates CRC-24 for an input data list. The input data should be a whole message with data bytes and 3 bytes of CRC-24. The result should be <CrcIsOk> for correct input messages.
+crc24 :: [Word8]                -- ^ the input bytes list with 3 CRC-24 least significant bytes
+         -> Crc24CheckResult    -- ^ the result of CRC-24 checking
 crc24 msg = let result = (crc24' . preparedData . reverse) msg in
     case result of
         0 -> CrcIsOk
         _ -> Fail result
 
+-- | The <crc24XorOut> functions calculates an input data list CRC-24 checksum XORed with a first argument. The input data should be a whole message with data bytes and 3 bytes of CRC-24. The result should be <CrcIsOk> for correct input messages.
 crc24XorOut ::
-            Word32      -- Data for XOR
-         -> [Word8]     -- input bytes list with 3 zero least bytes
-         -> Crc24CheckResult
+        Word32              -- ^ data for XOR
+         -> [Word8]             -- ^ input bytes list with 3 CRC-24 least significant bytes
+         -> Crc24CheckResult    -- ^ the result of CRC-24 checking
 crc24XorOut xorData msg = let
     result = (crc24' . preparedData . reverse) msg `xor` (xorData .&. mask24bits) in
     case result of
