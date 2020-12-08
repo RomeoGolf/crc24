@@ -49,7 +49,6 @@ crc24' (buf, x:xs) = let
     in crc24' (processedBuf buf' 8, xs)
 
 crc24 :: [Word8]        -- input bytes list with 3 zero least bytes
-         {--> Word32      -- crc24 in 3 leasb bytes-}
          -> Crc24CheckResult
 crc24 msg = let result = (crc24' . preparedData . reverse) msg in
     case result of
@@ -59,7 +58,6 @@ crc24 msg = let result = (crc24' . preparedData . reverse) msg in
 crc24XorOut ::
             Word32      -- Data for XOR
          -> [Word8]     -- input bytes list with 3 zero least bytes
-         {--> Word32      -- crc24 in 3 leasb bytes-}
          -> Crc24CheckResult
 crc24XorOut xorData msg = let
     result = (crc24' . preparedData . reverse) msg `xor` (xorData .&. mask24bits) in
