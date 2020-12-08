@@ -7,12 +7,16 @@ module Ads_b
     crc24DataOnlyXorOut,
     encodedAddress,
     apFieldForUpFormat,
-    apFieldForDownFormat
+    apFieldForDownFormat,
+    Crc24CheckResult (CrcIsOk, Fail)
+    {-Fail-}
     ) where
 
 import Numeric (readHex, showHex)
 import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
+
+data Crc24CheckResult = CrcIsOk | Fail Word32   deriving (Show, Eq)
 
 mask24bits = 0x00FFFFFF
 
@@ -44,14 +48,23 @@ crc24' (buf, x:xs) = let
     in crc24' (processedBuf buf' 8, xs)
 
 crc24 :: [Word8]        -- input bytes list with 3 zero least bytes
-         -> Word32      -- crc24 in 3 leasb bytes
-crc24 = crc24' . preparedData . reverse
+         {--> Word32      -- crc24 in 3 leasb bytes-}
+         -> Crc24CheckResult
+crc24 msg = let result = (crc24' . preparedData . reverse) msg in
+    case result of
+        0 -> CrcIsOk
+        _ -> Fail result
 
 crc24XorOut ::
             Word32      -- Data for XOR
          -> [Word8]     -- input bytes list with 3 zero least bytes
-         -> Word32      -- crc24 in 3 leasb bytes
-crc24XorOut xorData msg = crc24 msg `xor` (xorData .&. mask24bits)
+         {--> Word32      -- crc24 in 3 leasb bytes-}
+         -> Crc24CheckResult
+crc24XorOut xorData msg = let
+    result = (crc24' . preparedData . reverse) msg `xor` (xorData .&. mask24bits) in
+    case result of
+        0 -> CrcIsOk
+        _ -> Fail result
 
 testData :: [Word8]
 testData = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
@@ -59,7 +72,7 @@ testData' :: [Word8]
 testData' = [0, 0, 0, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
 
 crc24DataOnly :: [Word8] -> Word32
-crc24DataOnly xs = crc24 $ 0:0:0:xs
+crc24DataOnly xs = (crc24' . preparedData . reverse) $ 0:0:0:xs
 
 crc24DataOnlyXorOut :: Word32 -> [Word8] -> Word32
 crc24DataOnlyXorOut xorData xs = (.&.) mask24bits $ crc24DataOnly xs `xor` xorData
@@ -89,7 +102,8 @@ apFieldForUpFormat :: [Word8]     -- the input bytes
                       -> Word32   -- the MODE-S address
                       -> Word32   -- AP field
 apFieldForUpFormat bytes addr = let
-    crc = crc24 bytes
+    bytes' = (tail . tail . tail) bytes
+    crc = crc24DataOnly bytes'
     addr' = encodedAddress addr
     in crc `xor` addr'
 
@@ -97,5 +111,6 @@ apFieldForDownFormat :: [Word8]   -- the input bytes
                       -> Word32   -- the MODE-S address
                       -> Word32   -- AP field
 apFieldForDownFormat bytes addr = let
-    crc = crc24 bytes
+    bytes' = (tail . tail . tail) bytes
+    crc = crc24DataOnly bytes'
     in crc `xor` addr
