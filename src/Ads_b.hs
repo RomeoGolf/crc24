@@ -9,6 +9,7 @@ module Ads_b
     apFieldForUpFormat,
     apFieldForDownFormat,
     Crc24CheckResult (CrcIsOk, Fail)
+    , errorMessagePrepareData
     ) where
 
 import Numeric (readHex, showHex)
@@ -18,6 +19,7 @@ import Data.Bits ((.|.), (.&.), shift, xor)
 data Crc24CheckResult = CrcIsOk | Fail Word32   deriving (Show, Eq)
 
 mask24bits = 0x00FFFFFF
+errorMessagePrepareData = "The data is too short!"
 
 preparedData :: [Word8]                 -- input list of bytes
                 -> (Word32, [Word8])    -- initial buffer and the rest list
@@ -26,7 +28,7 @@ preparedData (x0:x1:x2:xs) = let
                 .|. fromIntegral x1 `shift` 16
                 .|. fromIntegral x2 `shift` 08
     in (initBuf, xs)
-preparedData _ = error "The data is too short!"
+preparedData _ = error errorMessagePrepareData
 
 crc24' :: (Word32, [Word8])     -- initial buffer and the rest list
             -> Word32           -- crc24 in 3 least bytes
