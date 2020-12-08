@@ -2,6 +2,7 @@ module Ads_bSpec where
 
 import Test.QuickCheck hiding ((.|.), (.&.), shift, xor)
 import Test.Hspec
+import Control.Exception
 
 import Ads_b
 
@@ -77,6 +78,18 @@ spec = do
         it "CRC24 main test" $
             crc24DataOnly testData `shouldBe` check
 
+        it "show CrcIsOk test" $
+            show CrcIsOk `shouldBe` "CrcIsOk"
+        it "show Fail test" $
+            show (Fail 0x01) `shouldBe` "Fail 1"
+
+        it "short data error test 0" $ do
+            evaluate (crc24 []) `shouldThrow` errorCall errorMessagePrepareData
+        it "short data error test 1" $ do
+            evaluate (crc24 [0]) `shouldThrow` errorCall errorMessagePrepareData
+        it "short data error test 2" $ do
+            evaluate (crc24 [0, 1]) `shouldThrow` errorCall errorMessagePrepareData
+
         it "encode address 1" $
             encodedAddress testAddr1 `shouldBe` encAddr1
         it "encode address 2" $
@@ -103,6 +116,13 @@ spec = do
             apFieldForDownFormat testMsg4 testAddrDf3 `shouldBe` ap1
         it "calc downlink AP field 4" $
             apFieldForDownFormat testMsg4 testAddrDf4 `shouldBe` ap3
+
+        it "check downlink AP field fail 1" $
+            crc24 [ 0x98, 0x60, 0x57, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] `shouldBe` CrcIsOk
+        it "check downlink AP field fail 2" $
+            crc24 [ 0x00, 0x00, 0x00, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] `shouldBe` Fail 0x576098
+        it "check downlink AP field fail 3" $
+            crc24XorOut 0 [ 0x00, 0x00, 0x00, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] `shouldBe` Fail 0x576098
 
         it "check downlink AP field 1" $
             crc24XorOut 0 [ 0x98, 0x60, 0x57, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] `shouldBe` CrcIsOk
