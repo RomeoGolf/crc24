@@ -71,9 +71,9 @@ spec :: Spec
 spec = do
     describe "ADS-B" $ do
         it "CRC24 calculation & checking" $
-            property $ prop_Crc24
+            property prop_Crc24
         it "CRC24 with XorOut calculation & checking" $
-            property $ prop_Crc24XorOutUplink
+            property prop_Crc24XorOutUplink
 
         it "CRC24 main test" $
             crc24DataOnly testData `shouldBe` check
