@@ -9,20 +9,20 @@ import Ads_b
 import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
 
+low3bytes :: Word32 -> [Word8]
+low3bytes x = [x1, x2, x3] where
+    x1 = fromIntegral ( x .&. 0xFF)
+    x2 = fromIntegral ((x `shift` (-8)) .&. 0xFF)
+    x3 = fromIntegral ((x `shift` (-16)) .&. 0xFF)
+
 prop_Crc24 :: [Word8] -> Bool
-prop_Crc24 xs = crc24 (x1:x2:x3:xs) == CrcIsOk where
+prop_Crc24 xs = crc24 (low3bytes crc' ++ xs) == CrcIsOk where
     crc' = crc24DataOnly xs
-    x1 = fromIntegral (crc' .&. 0xFF)
-    x2 = fromIntegral ((crc' `shift` (-8)) .&. 0xFF)
-    x3 = fromIntegral ((crc' `shift` (-16)) .&. 0xFF)
 
 prop_Crc24XorOutUplink :: Word32 -> [Word8] -> Bool
-prop_Crc24XorOutUplink xorData xs = crc24XorOut xorData' (x1:x2:x3:xs) == CrcIsOk where
+prop_Crc24XorOutUplink xorData xs = crc24XorOut xorData' (low3bytes crc' ++ xs) == CrcIsOk where
     xorData' = xorData --    .&. 0xFFFFFF
     crc' = crc24DataOnlyXorOut xorData' xs
-    x1 = fromIntegral (crc' .&. 0xFF)
-    x2 = fromIntegral ((crc' `shift` (-8)) .&. 0xFF)
-    x3 = fromIntegral ((crc' `shift` (-16)) .&. 0xFF)
 
 testData :: [Word8]
 testData = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
