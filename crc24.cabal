@@ -4,11 +4,11 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 928a44d81b4c9bc1f422951ac3bc0895df8eca7ca4a4d80b142ce8df2128757d
+-- hash: cb0c58bdf15cd7e8c544cfdc86d2ae110ec2bfb382255024e47dc32ea66e86da
 
 name:           crc24
 version:        0.1.0.0
-description:    Please see the README on GitHub at https://github.com/RomeoGolf/crc24#readme>
+description:    Please see the README on GitHub at https://github.com/RomeoGolf/crc24#readme
 homepage:       https://github.com/RomeoGolf/crc24#readme
 bug-reports:    https://github.com/RomeoGolf/crc24/issues
 author:         RomeoGolf
