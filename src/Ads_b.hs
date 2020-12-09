@@ -1,6 +1,6 @@
 {- |
 Module      : Ads_b
-Description : This module contains functions for CRC-24 calculating and checking
+Description : contains functions for CRC-24 calculating and checking
 Copyright   : (c) RomeoGolf, 2020
 License     : MIT
 Maintainer  : triangulumsoft@gmail.com
