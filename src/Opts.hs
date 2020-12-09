@@ -68,8 +68,9 @@ flagDescr =
 compilerOpts :: [String] -> IO ([Flag], [String])
 compilerOpts argv =
     case getOpt Permute flagDescr argv of
-       (o,n,[]  ) -> return (o,n)
-       (_,_,errs) -> ioError (userError (concat errs ++ usageInfo header flagDescr))
+        (o,n,[]  ) -> return (o,n)
+        (_,_,errs) -> ioError (userError (concat errs
+            ++ usageInfo header flagDescr))
     where header = "Usage: <this-exe> [OPTION...] files..."
 
 hasCheckCrc, hasCheckCrcUplink, hasCheckCrcDownlink,
