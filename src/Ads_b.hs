@@ -1,6 +1,6 @@
 {- |
 Module      : Ads_b
-Description : This module contains funstions for CRC-24 calculating and checking
+Description : This module contains functions for CRC-24 calculating and checking
 Copyright   : (c) RomeoGolf, 2020
 License     : MIT
 Maintainer  : triangulumsoft@gmail.com
@@ -35,19 +35,19 @@ SECONDARY SURVEILLANCE RADAR MODE S TRANSPONDERS" document:
 > The following combinations of texts and interrogation
 > addresses AA will result in AP as shown:
 >
-> UF=4, all fields = 0, AA = CO 51 F6 {HEX} : AP = all ZEROs.
-> UF=4, all fields = 0, AA = 3F AB F2 {HEX} : AP = AA AA AA {HEX}.
+> UF=4,  all fields = 0, AA = CO 51 F6 {HEX} : AP = all ZEROs.
+> UF=4,  all fields = 0, AA = 3F AB F2 {HEX} : AP = AA AA AA {HEX}.
 > UF=20, all fields = 0, AA = AC C5 55 {HEX} : AP = all ZEROs.
 > UF=20, all fields = 0, AA = 53 3F 51 {HEX} : AP = AA AA AA {HEX}.
 >
-> DF=5, all fields = 0, AA = 20 78 CE {HEX} : AP = all ZEROs.
-> DF=5, all fields = 0, AA = 75 2D 9B {HEX} : AP = 55 55 55 {HEX}.
+> DF=5,  all fields = 0, AA = 20 78 CE {HEX} : AP = all ZEROs.
+> DF=5,  all fields = 0, AA = 75 2D 9B {HEX} : AP = 55 55 55 {HEX}.
 > DF=21, all fields = 0, AA = 0B 15 4F {HEX} : AP = all ZEROs.
 > DF=2l, all fields = 0, AA = 5E 40 1A {HEX} : AP = 55 55 55 {HEX}.
 
-To encoding AP field in the MODE-S uplink:
+To encode AP field in the MODE-S uplink:
 
-1. Calculate CRC-24 for the message with zero values in the least 3 bytes.
+1. Calculate CRC-24 for the message with zero values in the 3 low bytes.
 2. Encode the interrogator MODE-S address. Use the @0xFFFFFF@ address for the all-call (UF11).
 3. Calculate AP field: @\<CRC-24\>@ XOR @\<modified address\>@.
 
@@ -80,7 +80,7 @@ Example DF11 squitter:
 > 0x112231 – MODE-S address
 > 0x3F078D – CRC-24
 
-And so @<crc24> [0x8d, 0x07, 0x3f, 0x31, 0x22, 0x11, 0x5f]@ = 0
+And so @'crc24' [0x8d, 0x07, 0x3f, 0x31, 0x22, 0x11, 0x5f]@ = 0
 -}
 
 module Ads_b
@@ -100,9 +100,15 @@ import Numeric (readHex, showHex)
 import Data.Word (Word8, Word32)
 import Data.Bits ((.|.), (.&.), shift, xor)
 
-data Crc24CheckResult = CrcIsOk | Fail Word32   deriving (Show, Eq)
+-- | The result of CRC-24 checksum checking.
+data Crc24CheckResult
+    = CrcIsOk       -- ^ if the whole message CRC-24 checksum is equial to zero
+    | Fail Word32   -- ^ if the whole message CRC-24 checksum is not equial to zero, contains a checksum calculation result
+    deriving (Show, Eq)
 
 mask24bits = 0x00FFFFFF
+
+-- | The named const for error message if a data length for the 'crc24' or 'crc24XorOut' functions is less than 3 bytes
 errorMessagePrepareData = "The data is too short!"
 
 preparedData :: [Word8]                 -- input list of bytes
@@ -115,7 +121,7 @@ preparedData (x0:x1:x2:xs) = let
 preparedData _ = error errorMessagePrepareData
 
 crc24' :: (Word32, [Word8])     -- initial buffer and the rest list
-            -> Word32           -- crc24 in 3 least bytes
+            -> Word32           -- crc24 in 3 low bytes
 crc24' (buf, []) = buf `shift` (-8)
 crc24' (buf, x:xs) = let
     maskC :: Word32
@@ -132,18 +138,18 @@ crc24' (buf, x:xs) = let
         in processedBuf b'' (pred cnt)
     in crc24' (processedBuf buf' 8, xs)
 
--- | The <crc24> functions calculates CRC-24 for an input data list. The input data should be a whole message with data bytes and 3 bytes of CRC-24. The result should be <CrcIsOk> for correct input messages.
-crc24 :: [Word8]                -- ^ the input bytes list with 3 CRC-24 least significant bytes
+-- | The 'crc24' functions calculates CRC-24 for an input data list, e. g. 7 bytes for DF11 or 14 bytes for DF21. The input data should be a whole message with data bytes and 3 bytes of CRC-24. The input data length should be at least 3 bytes. The result should be 'CrcIsOk' for correct input messages.
+crc24 :: [Word8]                -- ^ the input bytes list with CRC-24 checksum in a 3 low bytes
          -> Crc24CheckResult    -- ^ the result of CRC-24 checking
 crc24 msg = let result = (crc24' . preparedData . reverse) msg in
     case result of
         0 -> CrcIsOk
         _ -> Fail result
 
--- | The <crc24XorOut> functions calculates an input data list CRC-24 checksum XORed with a first argument. The input data should be a whole message with data bytes and 3 bytes of CRC-24. The result should be <CrcIsOk> for correct input messages.
+-- | The 'crc24XorOut' functions calculates an input data list CRC-24 checksum XORed with the first argument. The input data should be a whole message with data bytes and 3 bytes of CRC-24. The input data length should be at least 3 bytes. The result should be 'CrcIsOk' for correct input messages.
 crc24XorOut ::
-        Word32              -- ^ data for XOR
-         -> [Word8]             -- ^ input bytes list with 3 CRC-24 least significant bytes
+        Word32                  -- ^ the data for XORing (XorOut)
+         -> [Word8]             -- ^ the input bytes list with 3 CRC-24 low bytes
          -> Crc24CheckResult    -- ^ the result of CRC-24 checking
 crc24XorOut xorData msg = let
     result = (crc24' . preparedData . reverse) msg `xor` (xorData .&. mask24bits) in
@@ -151,18 +157,24 @@ crc24XorOut xorData msg = let
         0 -> CrcIsOk
         _ -> Fail result
 
-crc24DataOnly :: [Word8] -> Word32
+-- | The crc24DataOnly function calculates CRC-24 checksum for an input data list, e.g. 4 bytes for DF11 or 11 bytes for DF21. 3 low bytes of result is the CRC-24.
+crc24DataOnly :: [Word8]    -- ^ the input data list, a head is LSB
+                -> Word32   -- ^ the CRC-24 checksum in 3 low bytes
 crc24DataOnly xs = (crc24' . preparedData . reverse) $ 0:0:0:xs
 
-crc24DataOnlyXorOut :: Word32 -> [Word8] -> Word32
+-- | The 'crc24DataOnlyXorOut> function calculates an input data list CRC-24 checksum XORed with the first argument. 3 low bytes of result is the CRC-24.
+crc24DataOnlyXorOut :: Word32   -- ^ the data for XORing (XorOut)
+                    -> [Word8]  -- ^ the input data list, a head is LSB
+                    -> Word32   -- ^ the CRC-24 checksum in 3 low bytes
 crc24DataOnlyXorOut xorData xs = (.&.) mask24bits $ crc24DataOnly xs `xor` xorData
 
+-- helper function for an address encoding
 encodedAddress' :: Word32       -- the MODE-S address
                    -> Word32    -- the CRC24 polynom
                    -> Word32    -- the buffer for a result
                    -> Int       -- the counter for recurrent invoking
                    -> Word32    -- the encoded address
-encodedAddress' addr poly buff 0 = buff .&. mask24bits -- least 24 bits
+encodedAddress' addr poly buff 0 = buff .&. mask24bits -- 24 low bits
 encodedAddress' addr poly buff cnt = let
     maskC :: Word32
     maskC = 0x01000000
@@ -171,24 +183,27 @@ encodedAddress' addr poly buff cnt = let
     buff' = if addr' .&. maskC /= 0 then buff `xor` poly' else buff
     in encodedAddress' addr' poly' buff' (pred cnt)
 
-encodedAddress :: Word32        -- the MODE-S address
-                  -> Word32     -- the encoded address
+-- | The 'encodedAddress' functions encodes aircraft mode-S address for uplink messages
+encodedAddress :: Word32        -- ^ the MODE-S aircraft address in 3 low bytes
+                  -> Word32     -- ^ the encoded address
 encodedAddress addr = encodedAddress' addr poly 0 24 where
     poly :: Word32
     poly = 0x01FFF409
 
-apFieldForUpFormat :: [Word8]     -- the input bytes
-                      -> Word32   -- the MODE-S address
-                      -> Word32   -- AP field
+-- | The 'apFieldForUpFormat' function calculates an AP field for uplink messages
+apFieldForUpFormat :: [Word8]     -- ^ the input bytes: whole message (e. g. 7 or 14 bytes) with zeroes 3 low bytes
+                      -> Word32   -- ^ the MODE-S aircraft address in 3 low bytes
+                      -> Word32   -- ^ AP field in 3 low bytes
 apFieldForUpFormat bytes addr = let
     bytes' = (tail . tail . tail) bytes
     crc = crc24DataOnly bytes'
     addr' = encodedAddress addr
     in crc `xor` addr'
 
-apFieldForDownFormat :: [Word8]   -- the input bytes
-                      -> Word32   -- the MODE-S address
-                      -> Word32   -- AP field
+-- | The 'apFieldForDownFormat' function calculates an AP field for downlink messages
+apFieldForDownFormat :: [Word8]   -- ^ the input bytes: whole message (e. g. 7 or 14 bytes) with zeroes 3 low bytes
+                      -> Word32   -- ^ the MODE-S aircraft address in 3 low bytes
+                      -> Word32   -- ^ AP field in 3 low bytes
 apFieldForDownFormat bytes addr = let
     bytes' = (tail . tail . tail) bytes
     crc = crc24DataOnly bytes'
