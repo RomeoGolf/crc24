@@ -13,7 +13,7 @@ secondary surveillance radar system (ADS-B, aircraft transponders in MODE-S)
 * [About ADS-B CRC-24](#desc)
 * [Using](#using)
     * [Options](#opt)
-    * [Example](#examp)
+    * [Examples](#examp)
 * [License](#lic)
 
 ## Getting Started <a id="gs"></a>
@@ -222,9 +222,58 @@ all-call address will be used.
 If `--file` options is present, commandline input data will be ignored.
 
 
-### Example <a id="examp"></a>
+### Examples <a id="examp"></a>
 
+```bash
+> crc24 -v
+Version: 0.1
+```
 
+```bash
+> crc24 --check-crc 66 5E A0 31 32 33 34 35 36 37 38 39
+CRC-24 is OK
+```
+
+```bash
+> crc24 --check-crc 00 00 00 31 32 33 34 35 36 37 38 39
+CRC-24 is wrong: 0xA05E66
+```
+
+```bash
+> crc24 --calc-crc 31 32 33 34 35 36 37 38 39
+CRC-24: 0xA05E66
+```
+
+```bash
+> crc24 -sv -a0x3fabf2 --check-crc-uplink --calc-ap --encode-addr aa aa aa 00 00 00 20
+Version: 0.1
+Address: 0x3FABF2
+No data file name
+Input message (hex): aa aa aa 00 00 00 20
+Uplink CRC-24 is OK
+Encoded Address: 0x2ACCF5
+Uplink AP field: 0xAAAAAA
+```
+
+```bash
+> crc24 --arg-file=args.txt
+Address: 0x112231
+Input message (hex): 8d 07 3f 31 22 11 5f
+CRC-24 is OK
+Encoded Address: 0x1E3c94
+```
+
+```bash
+args.txt:
+>>>>>
+-s -a0x112231 --check-crc --encode-addr -finput.txt
+<<<<<
+
+input.txt:
+>>>>>
+8d 07 3f 31 22 11 5f
+<<<<<
+```
 
 ## License <a id="lic"></a>
 
