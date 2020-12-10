@@ -27,3 +27,4 @@ bin/
 *.swp
 tags
 doc/
+.vim-prj.vim
