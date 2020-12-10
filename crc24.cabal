@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ab1aaa9a3efb042064230a0d2f0a45fc289743cc0770268a8d6de46b8e6c23e2
+-- hash: dd87751011d78d0b2c37ace8e4f14fbef7a70e3a52b7e26f8d9727ae10c58c67
 
 name:           crc24
 version:        0.1.0.0
@@ -42,7 +42,7 @@ library
     , tasty >=1.2.3 && <2
   default-language: Haskell2010
 
-executable crc24-exe
+executable crc24
   main-is: Main.hs
   other-modules:
       Paths_crc24

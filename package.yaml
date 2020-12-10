@@ -32,7 +32,8 @@ library:
   source-dirs: src
 
 executables:
-  crc24-exe:
+  #crc24-exe:
+  crc24:
     main:                Main.hs
     source-dirs:         app
     ghc-options:

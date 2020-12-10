@@ -34,20 +34,20 @@ After your project is built successfully, you can install:
 stack install
 ```
 
-to install executable `crc24-exe` to the user `/bin` directory
+to install executable `crc24` to the user `/bin` directory
 (e. g. `C:\Users\<username>\AppData\Roaming\local\bin` on Windows), or
 
 ```bash
 stack install --local-bin-path ./bin/
 ```
 
-to install `crc24-exe` to the `./bin` directory in the current directory.
+to install `crc24` to the `./bin` directory in the current directory.
 
 Also you can run it without installing by
-`stack exec crc24-exe [ -- <arguments>]`, e. g.:
+`stack exec crc24 [ -- <arguments>]`, e. g.:
 
 ```bash
-stack exec crc24-exe -- -v
+stack exec crc24 -- -v
 ```
 
 ### Running the tests <a id="test"></a>
