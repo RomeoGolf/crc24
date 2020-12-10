@@ -3,6 +3,7 @@ module Main where
 
 import System.Environment (getArgs)
 import System.IO (readFile)
+import System.Exit
 import System.Console.GetOpt
 import Text.Printf
 import Data.Maybe (fromMaybe)
@@ -27,14 +28,17 @@ main = do
         Nothing     -> return $ unwords rest
         Just fname' -> readFile fname'
 
-    when (hasVersion flags) $ putStrLn "Version: 0.1"
-
     when (null flags) $ do
         putStrLn "No options!"
         putStr $ usageInfo helpHeader flagDescr
+        exitWith ExitSuccess
+
+    when (hasVersion flags) $ do
+        putStrLn "Version: 0.1"
 
     when (hasHelp flags) $ do
         putStr $ usageInfo helpHeader flagDescr
+        exitWith ExitSuccess
 
     when (hasShowInput flags) $ do
             case addressModeS flags of
