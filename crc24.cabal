@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cb0c58bdf15cd7e8c544cfdc86d2ae110ec2bfb382255024e47dc32ea66e86da
+-- hash: ab1aaa9a3efb042064230a0d2f0a45fc289743cc0770268a8d6de46b8e6c23e2
 
 name:           crc24
 version:        0.1.0.0
