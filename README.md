@@ -22,7 +22,7 @@ secondary surveillance radar system (ADS-B, aircraft transponders in MODE-S)
 
 To get the source code on your system, you may want to clone this repository:
 
-```bash
+```console
 $ git clone https://github.com/RomeoGolf/crc24
 ```
 
@@ -31,7 +31,7 @@ To build this project you need to have haskell stack installed.
 Install the latest version of
 [Stack](https://github.com/commercialhaskell/stack); use
 
-```bash
+```console
 stack upgrade
 ```
 
@@ -42,20 +42,20 @@ to confirm you are on the latest version.
 Make sure your Stack project builds without errors.
 Use
 
-```bash
+```console
 stack build
 ```
 
 After your project is built successfully, you can install:
 
-```bash
+```console
 stack install
 ```
 
 to install executable `crc24` to the user `/bin` directory
 (e. g. `C:\Users\<username>\AppData\Roaming\local\bin` on Windows), or
 
-```bash
+```console
 stack install --local-bin-path ./bin/
 ```
 
@@ -64,7 +64,7 @@ to install `crc24` to the `./bin` directory in the current directory.
 Also you can run it without installing by
 `stack exec crc24 [ -- <arguments>]`, e. g.:
 
-```bash
+```console
 stack exec crc24 -- -v
 ```
 
@@ -84,7 +84,7 @@ directory.
 ## About ADS-B CRC-24
 
 CRC-24 description:
-```bash
+```console
    Name : CRC-24/ADS-B
   Width : 24
    Poly : FFF409 (hex)
@@ -110,7 +110,7 @@ Check = CRC-24 for the `«123456789»` string or `{ 0x31, 0x32, 0x33, 0x34,
 From the "MINIMUM OPERATIONAL PERFORMANCE SPECIFICATION FOR
 SECONDARY SURVEILLANCE RADAR MODE S TRANSPONDERS" document:
 
-```bash
+```console
  The following combinations of texts and interrogation
  addresses AA will result in AP as shown:
 
@@ -142,7 +142,7 @@ The address  must be multiplied om polynom CRC-24, then most significant
 
 For example:
 
-```bash
+```console
  For AA = 0xC051F6 encoded address is: 0x80665F
  For AA = 0x3FABF2 encoded address is: 0x2ACCF5
  For AA = 0xACC555 encoded address is: 0xC88294
@@ -151,7 +151,7 @@ For example:
 
 CRC-24 for transmitted data:
 
-```bash
+```console
  UF/DF 4:    0x20 00 00 00 00 00 00,                       CRC-24 = 0x80665F
  UF/DF 5:    0x28 00 00 00 00 00 00,                       CRC-24 = 0x2078CE
  UF/DF 20:   0xA0 00 00 00 00 00 00 00 00 00 00 00 00 00,  CRC-24 = 0xC88294
@@ -164,7 +164,7 @@ UF11 with zero fields = `0x58000000`, CRC-24 = `0xE0EF0D`, AP = `0x4A430A`
 
 Example DF11 squitter:
 
-```bash
+```console
  0x 5F 11 22 31 3F 07 8D
  0x5F: DF field = 11 (5 bits) and CA field = 3 (3 bits)
  0x112231 – MODE-S address
@@ -175,13 +175,13 @@ And so `crc24 [0x8d, 0x07, 0x3f, 0x31, 0x22, 0x11, 0x5f]` result in 0
 
 ## Using
 
-```bash
+```console
 > crc24 [options] [input data as HEX bytes, low bytes first]
 ```
 
 Input data example:
 
-```bash
+```console
 31 32 33 34 35 36 37 38 39
 ```
 
@@ -189,7 +189,7 @@ It corresponds to the "123456789" ASCII string
 
 ### Options
 
-```bash
+```console
  --check-crc             Check CRC-24 for an input data (without XorOut)
  --check-crc-uplink      Check CRC-24 for an uplink input data
  --check-crc-downlink    Check CRC-24 for an downlink input data
@@ -224,27 +224,27 @@ If `--file` options is present, commandline input data will be ignored.
 
 ### Examples
 
-```bash
+```console
 > crc24 -v
 Version: 0.1
 ```
 
-```bash
+```console
 > crc24 --check-crc 66 5E A0 31 32 33 34 35 36 37 38 39
 CRC-24 is OK
 ```
 
-```bash
+```console
 > crc24 --check-crc 00 00 00 31 32 33 34 35 36 37 38 39
 CRC-24 is wrong: 0xA05E66
 ```
 
-```bash
+```console
 > crc24 --calc-crc 31 32 33 34 35 36 37 38 39
 CRC-24: 0xA05E66
 ```
 
-```bash
+```console
 > crc24 -sv -a0x3fabf2 --check-crc-uplink --calc-ap --encode-addr aa aa aa 00 00 00 20
 Version: 0.1
 Address: 0x3FABF2
@@ -255,7 +255,7 @@ Encoded Address: 0x2ACCF5
 Uplink AP field: 0xAAAAAA
 ```
 
-```bash
+```console
 > crc24 --arg-file=args.txt
 Address: 0x112231
 Input message (hex): 8d 07 3f 31 22 11 5f
@@ -263,7 +263,7 @@ CRC-24 is OK
 Encoded Address: 0x1E3c94
 ```
 
-```bash
+```console
 args.txt:
 >>>>>
 -s -a0x112231 --check-crc --encode-addr -finput.txt
