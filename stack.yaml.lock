@@ -18,13 +18,6 @@ packages:
       sha256: 6a6ba1798090ee6245f5995303b6ccf1afea26c73d4e69b95330c8914056d420
   original:
     hackage: hspec-2.7.4
-- completed:
-    hackage: tasty-1.2.3@sha256:bba67074e5326d57e8f53fc1dabcb6841daa4dc51b053506eb7f40a6f49a0497,2517
-    pantry-tree:
-      size: 1725
-      sha256: 2f1bd0e1e1e105bdc8ee9eb53b55a6db54c67d0dce86ba08b61dbaf8988c5d58
-  original:
-    hackage: tasty-1.2.3
 snapshots:
 - completed:
     size: 532413
