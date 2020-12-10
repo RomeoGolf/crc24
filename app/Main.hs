@@ -49,7 +49,7 @@ main = do
             case fname flags of
                 Nothing     -> putStrLn "No data file name"
                 Just fname' -> putStrLn $ "Data file name: " ++ fname'
-            putStrLn $ "Input message (hex): " ++ content
+            putStr $ "Input message (hex): " ++ content
 
     when (hasCheckCrc flags) $
         case (crc24 . byteListFromInt . intListFromHex) content of
