@@ -10,7 +10,7 @@ secondary surveillance radar system (ADS-B, aircraft transponders in MODE-S)
     * [Installing](#inst)
     * [Running the tests](#test)
     * [Documentation](#doc)
-* [Description](#desc)
+* [About ADS-B CRC-24](#desc)
 * [Using](#using)
     * [Options](#opt)
     * [Example](#examp)
@@ -20,13 +20,31 @@ secondary surveillance radar system (ADS-B, aircraft transponders in MODE-S)
 
 ### Prerequisites <a id="pre"></a>
 
+To get the source code on your system, you may want to clone this repository:
+
+```bash
+$ git clone https://github.com/RomeoGolf/crc24
+```
+
 To build this project you need to have haskell stack installed.
 
 Install the latest version of
-[Stack](https://github.com/commercialhaskell/stack); use `stack upgrade`
+[Stack](https://github.com/commercialhaskell/stack); use
+
+```bash
+stack upgrade
+```
+
 to confirm you are on the latest version.
 
 ### Installing <a id="inst"></a>
+
+Make sure your Stack project builds without errors.
+Use
+
+```bash
+stack build
+```
 
 After your project is built successfully, you can install:
 
@@ -52,19 +70,18 @@ stack exec crc24 -- -v
 
 ### Running the tests <a id="test"></a>
 
+Use `stack test` to test the project.
+
 Use `stack test --coverage` instead to test the project
 and get the textual coverage reports.
 
 ### Documentation <a id="doc"></a>
 
-Make sure your Stack project builds without errors.
-Use `stack build`.
-Use `stack test` to test the project.
 use `stack --haddock --no-haddock-hyperlink-source --haddock-arguments -odoc`
 to get the project documentation in the `/doc` directory in the current
 directory.
 
-## Description <a id="desc"></a>
+## About ADS-B CRC-24 <a id="desc"></a>
 
 CRC-24 description:
 ```bash
