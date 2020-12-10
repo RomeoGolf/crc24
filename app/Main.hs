@@ -31,14 +31,14 @@ main = do
     when (null flags) $ do
         putStrLn "No options!"
         putStr $ usageInfo helpHeader flagDescr
-        exitWith ExitSuccess
+        exitSuccess
 
     when (hasVersion flags) $ do
         putStrLn "Version: 0.1"
 
     when (hasHelp flags) $ do
         putStr $ usageInfo helpHeader flagDescr
-        exitWith ExitSuccess
+        exitSuccess
 
     when (hasShowInput flags) $ do
             case addressModeS flags of
@@ -53,7 +53,7 @@ main = do
 
     when (hasCheckCrc flags) $
         case (crc24 . byteListFromInt . intListFromHex) content of
-            CrcIsOk  -> putStrLn $ "CRC-24 is OK"
+            CrcIsOk  -> putStrLn "CRC-24 is OK"
             Fail crc -> printf "CRC-24 is wrong: 0x%06X\n" crc
 
     when (hasCheckCrcUplink flags) $ do
@@ -63,7 +63,7 @@ main = do
             Just fname' -> return ()
         case (crc24XorOut (encodedAddress addressModeS')
                 . byteListFromInt . intListFromHex) content of
-            CrcIsOk  -> putStrLn $ "Uplink CRC-24 is OK"
+            CrcIsOk  -> putStrLn "Uplink CRC-24 is OK"
             Fail crc -> printf "Uplink CRC-24 is wrong: 0x%06X\n" crc
 
     when (hasCheckCrcDownlink flags) $ do
@@ -73,7 +73,7 @@ main = do
             Just fname' -> return ()
         case (crc24XorOut addressModeS'
                 . byteListFromInt . intListFromHex) content of
-            CrcIsOk  -> putStrLn $ "Downlink CRC-24 is OK"
+            CrcIsOk  -> putStrLn "Downlink CRC-24 is OK"
             Fail crc -> printf "Downlink CRC-24 is wrong: 0x%06X\n" crc
 
     when (hasCalcCrc flags) $
