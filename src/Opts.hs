@@ -65,13 +65,14 @@ flagDescr =
             "Print this help message"
        ]
 
+helpHeader = "Usage: crc24 [OPTION...] [DATA]"
+
 compilerOpts :: [String] -> IO ([Flag], [String])
 compilerOpts argv =
     case getOpt Permute flagDescr argv of
         (o,n,[]  ) -> return (o,n)
         (_,_,errs) -> ioError (userError (concat errs
-            ++ usageInfo header flagDescr))
-    where header = "Usage: <this-exe> [OPTION...] files..."
+            ++ usageInfo helpHeader flagDescr))
 
 hasCheckCrc, hasCheckCrcUplink, hasCheckCrcDownlink,
     hasCalcCrc, hasCalcCrcUplink, hasCalcCrcDownlink,

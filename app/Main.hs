@@ -29,6 +29,13 @@ main = do
 
     when (hasVersion flags) $ putStrLn "Version: 0.1"
 
+    when (null flags) $ do
+        putStrLn "No options!"
+        putStr $ usageInfo helpHeader flagDescr
+
+    when (hasHelp flags) $ do
+        putStr $ usageInfo helpHeader flagDescr
+
     when (hasShowInput flags) $ do
             case addressModeS flags of
                 Nothing     -> printf "No address in the options!\n\
