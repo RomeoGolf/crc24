@@ -83,11 +83,6 @@ spec = do
         it "CRC24 main test" $
             crc24DataOnly testData `shouldBe` check
 
-        it "show CrcIsOk test" $
-            show CrcIsOk `shouldBe` "CrcIsOk"
-        it "show Fail test" $
-            show (Fail 0x01) `shouldBe` "Fail 1"
-
         it "short data error test 0" $ do
             evaluate (crc24 []) `shouldThrow`
                 errorCall errorMessagePrepareData
@@ -127,38 +122,38 @@ spec = do
 
         it "check downlink AP field fail 1" $
             crc24 [ 0x98, 0x60, 0x57, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C,
-                    0x20, 0xD6, 0x40, 0x48, 0x8D ] `shouldBe` CrcIsOk
+                0x20, 0xD6, 0x40, 0x48, 0x8D ] == CrcIsOk `shouldBe` True
         it "check downlink AP field fail 2" $
             crc24 [ 0x00, 0x00, 0x00, 0xE0, 0x2C, 0xC3, 0x71, 0xC3, 0x2C,
-                    0x20, 0xD6, 0x40, 0x48, 0x8D ] `shouldBe` Fail 0x576098
+                0x20, 0xD6, 0x40, 0x48, 0x8D ] == Fail 0x576098 `shouldBe` True
         it "check downlink AP field fail 3" $
             crc24XorOut 0 [ 0x00, 0x00, 0x00, 0xE0, 0x2C, 0xC3, 0x71, 0xC3,
-                0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] `shouldBe` Fail 0x576098
+            0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] == Fail 0x576098`shouldBe` True
 
         it "check downlink AP field 1" $
             crc24XorOut 0 [ 0x98, 0x60, 0x57, 0xE0, 0x2C, 0xC3, 0x71, 0xC3,
-                    0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] `shouldBe` CrcIsOk
+                0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ]
+                    == CrcIsOk `shouldBe` True
         it "check downlink AP field 2" $
             crc24XorOut 0x576098 [ 0x00, 0x00, 0x00, 0xE0, 0x2C, 0xC3, 0x71,
-                0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ] `shouldBe` CrcIsOk
+                0xC3, 0x2C, 0x20, 0xD6, 0x40, 0x48, 0x8D ]
+                    == CrcIsOk `shouldBe` True
         it "check downlink AP field 3" $
-            crc24XorOut 0 [ 166, 85, 122, 35, 32, 77, 93 ] `shouldBe` CrcIsOk
+            crc24XorOut 0 [ 166, 85, 122, 35, 32, 77, 93 ]
+                == CrcIsOk `shouldBe` True
         it "check downlink AP field 4" $
             crc24XorOut 0 [ 0x8D, 0x07, 0x3F, 0x31, 0x22, 0x11, 0x5F ]
-                `shouldBe` CrcIsOk
+                == CrcIsOk `shouldBe` True
         it "check downlink AP field 5" $
             crc24XorOut 0x3F078D [ 0x00, 0x00, 0x00, 0x31, 0x22, 0x11, 0x5F ]
-                `shouldBe` CrcIsOk
+                == CrcIsOk `shouldBe` True
         it "check downlink AP field 6" $
             crc24XorOut 0x98F94F [ 0x00, 0x00, 0x00, 0x00, 0x00, 0xa4, 0x30,
-                0x00, 0xb0, 0x8d, 0x37, 0x0b, 0x00, 0xA0 ] `shouldBe` CrcIsOk
+            0x00, 0xb0, 0x8d, 0x37, 0x0b, 0x00, 0xA0 ]
+                == CrcIsOk `shouldBe` True
 
-        it "check CRC24 (1)" $
-            crc24 testMsg1' `shouldBe` CrcIsOk
-        it "check CRC24 (2)" $
-            crc24 testMsg2' `shouldBe` CrcIsOk
-        it "check CRC24 (3)" $
-            crc24 testMsg3' `shouldBe` CrcIsOk
-        it "check CRC24 (4)" $
-            crc24 testMsg4' `shouldBe` CrcIsOk
+        it "check CRC24 (1)" $ crc24 testMsg1' == CrcIsOk `shouldBe` True
+        it "check CRC24 (2)" $ crc24 testMsg2' == CrcIsOk `shouldBe` True
+        it "check CRC24 (3)" $ crc24 testMsg3' == CrcIsOk `shouldBe` True
+        it "check CRC24 (4)" $ crc24 testMsg4' == CrcIsOk `shouldBe` True
 

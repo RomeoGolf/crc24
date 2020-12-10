@@ -113,7 +113,7 @@ data Crc24CheckResult
                     -- is equial to zero
     | Fail Word32   -- ^ if the whole message CRC-24 checksum is not equial
                     -- to zero, contains a checksum calculation result
-    deriving (Show, Eq)
+    deriving (Eq)
 
 mask24bits = 0x00FFFFFF
 

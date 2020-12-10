@@ -52,26 +52,29 @@ main = do
             putStrLn $ "Input message (hex): " ++ content
 
     when (hasCheckCrc flags) $
-        putStrLn $ "CRC24 check: "
-                ++ show ((crc24 . byteListFromInt . intListFromHex) content)
+        case (crc24 . byteListFromInt . intListFromHex) content of
+            CrcIsOk  -> putStrLn $ "CRC-24 is OK"
+            Fail crc -> printf "CRC-24 is wrong: 0x%06X\n" crc
 
     when (hasCheckCrcUplink flags) $ do
         case addressModeS flags of
             Nothing     -> printf "Warning: Default all-call address 0x%06X \
             \is used.\n" defaultAddressModeS
             Just fname' -> return ()
-        putStrLn $ "CRC24 uplink check: "
-            ++ show ((crc24XorOut (encodedAddress addressModeS')
-                . byteListFromInt . intListFromHex) content)
+        case (crc24XorOut (encodedAddress addressModeS')
+                . byteListFromInt . intListFromHex) content of
+            CrcIsOk  -> putStrLn $ "Uplink CRC-24 is OK"
+            Fail crc -> printf "Uplink CRC-24 is wrong: 0x%06X\n" crc
 
     when (hasCheckCrcDownlink flags) $ do
         case addressModeS flags of
             Nothing     -> printf "Warning: Default all-call address 0x%06X \
             \is used.\n" defaultAddressModeS
             Just fname' -> return ()
-        putStrLn $ "CRC24 downlink check: "
-            ++ show ((crc24XorOut addressModeS'
-                . byteListFromInt . intListFromHex) content)
+        case (crc24XorOut addressModeS'
+                . byteListFromInt . intListFromHex) content of
+            CrcIsOk  -> putStrLn $ "Downlink CRC-24 is OK"
+            Fail crc -> printf "Downlink CRC-24 is wrong: 0x%06X\n" crc
 
     when (hasCalcCrc flags) $
         printf "CRC24: 0x%06X\n" ((crc24DataOnly . byteListFromInt
