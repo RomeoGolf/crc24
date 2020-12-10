@@ -77,7 +77,7 @@ and get the textual coverage reports.
 
 ### Documentation
 
-use `stack --haddock --no-haddock-hyperlink-source --haddock-arguments -odoc`
+use `stack build --haddock --no-haddock-hyperlink-source --haddock-arguments -odoc`
 to get the project documentation in the `/doc` directory in the current
 directory.
 
