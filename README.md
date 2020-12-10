@@ -5,20 +5,20 @@ secondary surveillance radar system (ADS-B, aircraft transponders in MODE-S)
 
 ## Table Of Content:
 
-* [Getting Started](#gs)
-    * [Prerequisites](#pre)
-    * [Installing](#inst)
-    * [Running the tests](#test)
-    * [Documentation](#doc)
-* [About ADS-B CRC-24](#desc)
+* [Getting Started](#getting-started)
+    * [Prerequisites](#prerequisites)
+    * [Installing](#installing)
+    * [Running the tests](#running-the-tests)
+    * [Documentation](#documentation)
+* [About ADS-B CRC-24](#about-ads-b-crc-24)
 * [Using](#using)
-    * [Options](#opt)
-    * [Examples](#examp)
-* [License](#lic)
+    * [Options](#options)
+    * [Examples](#examples)
+* [License](#license)
 
-## Getting Started <a id="gs"></a>
+## Getting Started
 
-### Prerequisites <a id="pre"></a>
+### Prerequisites
 
 To get the source code on your system, you may want to clone this repository:
 
@@ -37,7 +37,7 @@ stack upgrade
 
 to confirm you are on the latest version.
 
-### Installing <a id="inst"></a>
+### Installing
 
 Make sure your Stack project builds without errors.
 Use
@@ -68,20 +68,20 @@ Also you can run it without installing by
 stack exec crc24 -- -v
 ```
 
-### Running the tests <a id="test"></a>
+### Running the tests
 
 Use `stack test` to test the project.
 
 Use `stack test --coverage` instead to test the project
 and get the textual coverage reports.
 
-### Documentation <a id="doc"></a>
+### Documentation
 
 use `stack --haddock --no-haddock-hyperlink-source --haddock-arguments -odoc`
 to get the project documentation in the `/doc` directory in the current
 directory.
 
-## About ADS-B CRC-24 <a id="desc"></a>
+## About ADS-B CRC-24
 
 CRC-24 description:
 ```bash
@@ -173,7 +173,7 @@ Example DF11 squitter:
 
 And so `crc24 [0x8d, 0x07, 0x3f, 0x31, 0x22, 0x11, 0x5f]` result in 0
 
-## Using <a id="using"></a>
+## Using
 
 ```bash
 > crc24 [options] [input data as HEX bytes, low bytes first]
@@ -187,7 +187,7 @@ Input data example:
 
 It corresponds to the "123456789" ASCII string
 
-### Options <a id="opt"></a>
+### Options
 
 ```bash
  --check-crc             Check CRC-24 for an input data (without XorOut)
@@ -222,7 +222,7 @@ all-call address will be used.
 If `--file` options is present, commandline input data will be ignored.
 
 
-### Examples <a id="examp"></a>
+### Examples
 
 ```bash
 > crc24 -v
@@ -275,7 +275,7 @@ input.txt:
 <<<<<
 ```
 
-## License <a id="lic"></a>
+## License
 
 This project is licensed under the MIT License - see
 the [LICENSE.md](LICENSE.md) file for details
