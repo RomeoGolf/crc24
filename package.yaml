@@ -1,7 +1,7 @@
 name:                crc24
 version:             0.1.0.0
 github:              "RomeoGolf/crc24"
-license:             BSD3
+license:             MIT
 author:              "RomeoGolf"
 maintainer:          "triangulumsoft@gmail.com"
 copyright:           "2020 RomeoGolf"

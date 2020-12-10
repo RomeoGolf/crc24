@@ -14,7 +14,7 @@ bug-reports:    https://github.com/RomeoGolf/crc24/issues
 author:         RomeoGolf
 maintainer:     triangulumsoft@gmail.com
 copyright:      2020 RomeoGolf
-license:        BSD3
+license:        MIT
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
