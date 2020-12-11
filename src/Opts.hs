@@ -1,5 +1,28 @@
 
-module Opts where
+module Opts
+    (
+      defaultAddressModeS
+    , addressModeS
+    , compilerOpts
+    , argFname
+    , fname
+    , helpHeader
+    , flagDescr
+    , hasVersion
+    , hasHelp
+    , hasCheckCrc
+    , hasCheckCrcUplink
+    , hasCheckCrcDownlink
+    , hasCalcCrc
+    , hasCalcCrcUplink
+    , hasCalcCrcDownlink
+    , hasEncodeAddress
+    , hasCalcUplinkApField
+    , hasShowInput
+    , intListFromHex
+    , byteListFromInt
+    , Flag
+    )where
 
 import System.Console.GetOpt
 import Data.Word (Word8, Word32)
