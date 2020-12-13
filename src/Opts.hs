@@ -31,7 +31,7 @@ module Opts
     , hasShowInput
     , intListFromHex
     , byteListFromInt
-    , Flag
+    , Flag (..)
     )where
 
 import System.Console.GetOpt
