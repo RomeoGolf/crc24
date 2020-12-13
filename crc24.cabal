@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: bd125eac6f9ad5084ff47862d93bc24918cea0db1ee517adf8cdbb2dad6c1981
+-- hash: 4ca93c0b0ed1fec16c841df839180ebccb54d7839c2c5ccd39ec84e96b0bae54
 
 name:           crc24
 version:        0.1.0.0
@@ -62,6 +62,7 @@ test-suite crc24-test
   main-is: Spec.hs
   other-modules:
       Ads_bSpec
+      OptsSpec
       Paths_crc24
   hs-source-dirs:
       test
