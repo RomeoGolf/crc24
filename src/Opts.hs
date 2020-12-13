@@ -43,9 +43,6 @@ import Numeric (readHex, showHex)
 defaultAddressModeS :: Word32
 defaultAddressModeS = 0x00FFFFFF
 
-defaultFname :: String
-defaultFname = ""
-
 -- | Permissible values for options
 data Flag
     = CheckCrc
