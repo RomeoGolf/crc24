@@ -59,7 +59,7 @@ data Flag
     | ArgFile String
     | Version
     | Help
-    deriving (Eq, Ord, Show)
+    deriving Eq
 
 -- | Descriptor for command line options
 flagDescr =
