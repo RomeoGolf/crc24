@@ -4,7 +4,9 @@ import Test.QuickCheck hiding ((.|.), (.&.), shift, xor)
 import Test.Hspec
 
 import Opts
+import System.Console.GetOpt
 
+{-import System.IO.Error (isUserError)-}
 import Data.Word (Word8)
 
 flagsAll = [CheckCrc, CheckCrcUplink, CheckCrcDownlink, CalcCrc, CalcCrcUplink,
@@ -12,6 +14,25 @@ flagsAll = [CheckCrc, CheckCrcUplink, CheckCrcDownlink, CalcCrc, CalcCrcUplink,
         Input "data.hex", AddrModeS "0x012345", ArgFile "args.txt", Version,
         Help]
 flagsEmpty = []
+
+optsAllShort = ["--check-crc", "--check-crc-uplink", "--check-crc-downlink",
+    "--calc-crc", "--calc-crc-uplink", "--calc-crc-downlink",
+    "-e", "--calc-ap", "-s",
+    "-fdata.hex",
+    "-a0x012345",
+    "--arg-file=args.txt",
+    "-v", "-h",
+    "31", "32", "33", "34", "35"]
+
+optsAllLong = ["--check-crc", "--check-crc-uplink", "--check-crc-downlink",
+    "--calc-crc", "--calc-crc-uplink", "--calc-crc-downlink",
+    "--encode-addr", "--calc-ap", "--show-input",
+    "--file=data.hex",
+    "--address=0x012345",
+    "--arg-file=args.txt",
+    "--version", "--help",
+    "31", "32", "33", "34", "35"]
+
 
 testDataInput = "31 32 33 34 35 36 37 38 39"
 
@@ -21,9 +42,11 @@ testDataInt = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
 testDataWord8 :: [Word8]
 testDataWord8 = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39]
 
-opts1 = [""]
-resOpts1 :: IO ([Flag], [String])
-resOpts1 = return ([], [])
+optsEmpty = [""]
+
+restStr = ["31", "32", "33", "34", "35"]
+
+optsFail = ["--fail"]
 
 spec :: Spec
 spec = do
@@ -99,13 +122,29 @@ spec = do
         it "byteListFromInt test" $
             byteListFromInt testDataInt `shouldBe` testDataWord8
 
-        it "compilerOpts test" $
+        it "compilerOpts empty test" $
             {-compilerOpts opts1`shouldReturn` ([],[[]])-}
             {-compilerOpts opts1 >>= (`shouldBe` ([],[[]]) )-}
             do
-                (x, y) <- compilerOpts opts1
-                x == [] `shouldBe` True
+                (x, y) <- compilerOpts optsEmpty
+                null x `shouldBe` True
                 y == [[]] `shouldBe` True
+
+        it "compilerOpts success long options test" $
+            do
+                (x, y) <- compilerOpts optsAllLong
+                x == flagsAll `shouldBe` True
+                y `shouldBe` restStr
+
+        it "compilerOpts success short options test" $
+            do
+                (x, y) <- compilerOpts optsAllShort
+                x == flagsAll `shouldBe` True
+                y `shouldBe` restStr
+
+        it "compilerOpts fail test" $
+            compilerOpts optsFail `shouldThrow` -- isUserError -- anyIOException
+                (== userError ("unrecognized option `--fail'\n" ++ usageInfo helpHeader flagDescr))
 
 
 
