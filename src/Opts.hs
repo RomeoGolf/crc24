@@ -45,20 +45,20 @@ defaultAddressModeS = 0x00FFFFFF
 
 -- | Permissible values for options
 data Flag
-    = CheckCrc
-    | CheckCrcUplink
-    | CheckCrcDownlink
-    | CalcCrc
-    | CalcCrcUplink
-    | CalcCrcDownlink
-    | EncodeAddress
-    | CalcUplinkApField
-    | ShowInput
-    | Input String
-    | AddrModeS String
-    | ArgFile String
-    | Version
-    | Help
+    = CheckCrc          -- ^ Check CRC-24 for an input data (without XorOut)
+    | CheckCrcUplink    -- ^ Check CRC-24 for an uplink input data
+    | CheckCrcDownlink  -- ^ Check CRC-24 for an downlink input data
+    | CalcCrc           -- ^ Calculate CRC-24 for an input data (without XorOut)
+    | CalcCrcUplink     -- ^ Calculate CRC-24 for an uplink input data
+    | CalcCrcDownlink   -- ^ Calculate CRC-24 for an downlink input data
+    | EncodeAddress     -- ^ Encode MODE-S uplink address
+    | CalcUplinkApField -- ^ Calculate MODE-S uplink AP field
+    | ShowInput         -- ^ Show input data
+    | Input String      -- ^ Input HEX-file FILE (the data for CRC-24 processing)
+    | AddrModeS String  -- ^ MODE-S aircraft address ADDR (default 0x00FFFFFF)
+    | ArgFile String    -- ^ The text FILE contained commandline arguments
+    | Version           -- ^ Show the version information
+    | Help              -- ^ Print help message (options list)
     deriving Eq
 
 -- | Descriptor for command line options
